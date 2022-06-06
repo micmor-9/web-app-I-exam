@@ -9,38 +9,38 @@ const db = new sqlite.Database("./db.sqlite", (err) => {
 });
 
 exports.listCourses = () => {
-  const getIncompatibleCourses = () => {
-    return new Promise((resolve, reject) => {
-      db.all("SELECT * FROM incompatible_courses", [], (err, rows) => {
-        if (err) reject(false);
-        else resolve(rows);
-      });
-    });
-  };
-  getIncompatibleCourses().then((incompatibleCourses) => {
-    return new Promise((resolve, reject) => {
-      const sql = "SELECT * FROM course";
-      db.all(sql, [], (err, rows) => {
-        if (err) {
-          console.error(err);
-          reject(err);
-        } else {
-          const courses = rows.map(async (row) => {
-            const course = new Course(
-              row.code,
-              row.name,
-              row.credits,
-              row.maxStudents,
-              row.preparatoryCourse,
-              incompatibleCourses
+  return new Promise((resolve, reject) => {
+    db.all("SELECT * FROM incompatible_courses", [], (err, rows) => {
+      if (err) reject(false);
+      else {
+        const incompatible_courses = rows.map((course) => ({
+          courseCode: course.courseCode,
+          incompatibleWith: course.incompatibleWith,
+        }));
+        db.all("SELECT * FROM course ORDER BY name ASC", [], (err, rows) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+            return;
+          } else {
+            const courses = rows.map((row) => {
+              const incompatible = incompatible_courses
                 .filter((code) => code === row.code)
-                .map((course) => course.incompatibleWith)
-            );
-            return course;
-          });
-          resolve(courses);
-        }
-      });
+                .map((course) => course.incompatibleWith);
+              const course = new Course(
+                row.code,
+                row.name,
+                row.credits,
+                row.maxStudents,
+                row.preparatoryCourse,
+                incompatible
+              );
+              return course;
+            });
+            resolve(courses);
+          }
+        });
+      }
     });
   });
 };
