@@ -36,6 +36,30 @@ app.get('/api/courses', (req, res) => {
   .catch((err) => res.status(500).json(err));
 })
 
+/* // GET /api/study-plan - Get the single study plan
+app.get('/api/study-plan/:id', (req, res) => {
+  study_plan_dao.getStudyPlan(req.params.id)
+  .then(study_plan => res.json(study_plan))
+  .catch((err) => res.status(err.statusCode).json(err));
+}) */
+
+// POST /api/study-plan/create - Create a new study plan
+app.post('/api/study-plan/', 
+  check('option').isInt({ min: 0, max: 1}),
+  check('credits').isInt({ min: 20, max: 80 }),
+  check('studentId').isInt(),
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    study_plan_dao.createStudyPlan(req.body.option, req.body.credits, req.body.studentId)
+    .then(() => res.status(201).end())
+    .catch((err) => res.status(err.statusCode).json(err));
+  }
+)
+
 /************/
 
 // activate the server

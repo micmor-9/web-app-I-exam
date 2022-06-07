@@ -25,7 +25,7 @@ exports.listCourses = () => {
           } else {
             const courses = rows.map((row) => {
               const incompatible = incompatible_courses
-                .filter((code) => code === row.code)
+                .filter((code) => code.courseCode === row.code)
                 .map((course) => course.incompatibleWith);
               const course = new Course(
                 row.code,
