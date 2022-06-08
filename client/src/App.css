@@ -1,11 +1,122 @@
-#root {
-  min-width: 100vw;
+#rootContainer {
+  background-image: url("../public/bg.webp");
+  padding: 0;
+  padding-bottom: 0.5rem;
   min-height: 100vh;
-  padding: 2rem;
-    background-image: url('../public/bg.webp');
+}
+
+.container-xxxl {
+  width: 100vw;
+  padding-right: var(--bs-gutter-x, 0.75rem);
+  padding-left: var(--bs-gutter-x, 0.75rem);
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .App {
-  box-shadow: 5px 3px 10px #777777;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.main-navbar {
+  border-bottom: rgba(0, 0, 0, 0.08) 1px solid;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 10px 1px;
+}
+
+.navbar-brand a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.btn-outline-study {
+  color: #e69e18;
+  border-color: #e69e18;
+}
+
+.btn-outline-study:hover {
+  color: #ffffff;
+  background-color: #e69e18;
+}
+
+.btn-study {
+  /* 0d6efd 0b5ed7 */
+  color: #ffffff;
+  background-color: #e69e18;
+  border-color: #e69e18;
+}
+
+.btn-study:hover {
+  color: #ffffff;
+  border-color: #d49520;
+  background-color: #d49520;
+}
+
+#content {
+  border: rgba(0, 0, 0, 0.08) 1px solid;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 10px 1px;
+  padding: 1rem;
+  border-radius: 10px;
   background-color: #ffffff;
+}
+
+#coursesListPanel {
+  padding-top: 1rem;
+}
+
+.courses-list-item.card {
+  margin-bottom: 1rem;
+  cursor: pointer;
+  /* height: 90%; */
+}
+
+.course-code-badge {
+  background-color: #e69e18 !important;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.course-name {
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+.course-info p,
+.course-description p {
+  margin-bottom: 0.2rem;
+}
+
+.study-plan-list {
+  border: 5px dashed #dbdbdb;
+  border-radius: 10px;
+  color: #dbdbdb;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-left: calc(var(--bs-gutter-x) * 0.5);
+  padding: 3rem 0rem;
+  text-align: center;
+}
+
+.study-plan-header {
+  margin-bottom: 0;
+}
+
+.study-plan-head {
+  margin-bottom: 0.5rem;
+  padding-right: 0;
+}
+
+.study-plan-btn {
+  background-color: #e69e18 !important;
+  border-color: #e69e18 !important;
+  font-weight: 500;
+}
+
+.study-plan-btn-col {
+  padding-right: 0;
+  text-align: right;
+}
+
+.login-form-container {
+  max-width: 400px;
 }

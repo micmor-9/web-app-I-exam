@@ -1,6 +1,8 @@
-import { Container, Row, Col } from "react-bootstrap";
-import NavBar from "./NavBar";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import CoursesList from "./CoursesList";
+import LoginForm from "./LoginForm";
+import StudyPlan from "./StudyPlan";
+import StudyPlanCreateForm from "./StudyPlanCreateForm";
 
 function DefaultRoute() {
   return (
@@ -11,18 +13,42 @@ function DefaultRoute() {
   );
 }
 
-function HomepageRoute(props) {
+function LoginRoute(props) {
   return (
-    <Container fluid="xxl" className="App">
-      <Row id="navbarRow">
-        <NavBar />
-      </Row>
-      <Row id="mainRow">
-        <h3>Courses List</h3>
-        <CoursesList list={props.coursesList} />
+    <Container fluid="xxl" className="App login-form-container">
+      <Row id="content">
+        <LoginForm />
       </Row>
     </Container>
   );
 }
 
-export { DefaultRoute, HomepageRoute };
+function HomepageRoute(props) {
+  return (
+    <Container fluid="xxl" className="App">
+      <Row id="content">
+        <Row id="studyPlanPanel">
+          <StudyPlan studyPlan={props.studyPlan} />
+        </Row>
+        <Row id="coursesListPanel">
+          <h3 className="courses-list-header">Courses List</h3>
+          <CoursesList list={props.coursesList} />
+        </Row>
+      </Row>
+    </Container>
+  );
+}
+
+function StudyPlanCreateRoute(props) {
+  return (
+    <Container fluid="xxl" className="App">
+      <Row id="content">
+        <Row id="studyPlanCreateForm">
+          <StudyPlanCreateForm />
+        </Row>
+      </Row>
+    </Container>
+  );
+}
+
+export { DefaultRoute, LoginRoute, HomepageRoute, StudyPlanCreateRoute };
