@@ -31,6 +31,7 @@ exports.listCourses = () => {
                 row.code,
                 row.name,
                 row.credits,
+                row.enrolledStudents,
                 row.maxStudents,
                 row.preparatoryCourse,
                 incompatible
@@ -40,20 +41,6 @@ exports.listCourses = () => {
             resolve(courses);
           }
         });
-      }
-    });
-  });
-};
-
-exports.getIncompatibleCoursesByCourseCode = (code) => {
-  return new Promise((resolve, reject) => {
-    const sql =
-      "SELECT incompatibleWith FROM incompatible_courses WHERE courseCode = ?";
-    db.all(sql, [code], (err, rows) => {
-      if (err) reject(err);
-      else {
-        const incompatibleCourses = rows.map((row) => row.incompatibleWith);
-        resolve(incompatibleCourses);
       }
     });
   });

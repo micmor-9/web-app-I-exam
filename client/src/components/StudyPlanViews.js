@@ -1,6 +1,6 @@
 import { Container, Row, Col, Button } from "react-bootstrap";
 import CoursesList from "./CoursesList";
-import LoginForm from "./LoginForm";
+import { LoginForm } from "./AuthComponents";
 import StudyPlan from "./StudyPlan";
 import StudyPlanCreateForm from "./StudyPlanCreateForm";
 
@@ -16,8 +16,8 @@ function DefaultRoute() {
 function LoginRoute(props) {
   return (
     <Container fluid="xxl" className="App login-form-container">
-      <Row id="content">
-        <LoginForm />
+      <Row id="content" className="justify-content-center">
+        <LoginForm login={props.login} />
       </Row>
     </Container>
   );
@@ -26,12 +26,13 @@ function LoginRoute(props) {
 function HomepageRoute(props) {
   return (
     <Container fluid="xxl" className="App">
-      <Row id="content">
-        <Row id="studyPlanPanel">
-          <StudyPlan studyPlan={props.studyPlan} />
-        </Row>
+      <Row id="content" className="justify-content-center">
+        {props.loggedIn && (
+          <Row id="studyPlanPanel">
+            <StudyPlan studyPlan={props.studyPlan} />
+          </Row>
+        )}
         <Row id="coursesListPanel">
-          <h3 className="courses-list-header">Courses List</h3>
           <CoursesList list={props.coursesList} />
         </Row>
       </Row>
@@ -42,7 +43,7 @@ function HomepageRoute(props) {
 function StudyPlanCreateRoute(props) {
   return (
     <Container fluid="xxl" className="App">
-      <Row id="content">
+      <Row id="content" className="justify-content-center">
         <Row id="studyPlanCreateForm">
           <StudyPlanCreateForm />
         </Row>

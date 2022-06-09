@@ -18,6 +18,26 @@
   margin-bottom: 1.5rem;
 }
 
+.bi, .navbar-brand h3 {
+  color: #b57c12;
+}
+
+.navbar-brand h3 {
+  margin-bottom: 0;
+}
+
+.nav-link {
+  color: #b57c12;
+}
+
+.nav-link:hover, .nav-link:focus {
+  color: #e89f17;
+}
+
+.btn .bi {
+  color: #ffffff;
+}
+
 .main-navbar {
   border-bottom: rgba(0, 0, 0, 0.08) 1px solid;
   box-shadow: rgba(0, 0, 0, 0.08) 0px 0px 10px 1px;
@@ -63,6 +83,10 @@
   padding-top: 1rem;
 }
 
+.card-body {
+  padding: 0.7rem;
+}
+
 .page-item.active .page-link {
   background-color: #e69e18;
   border-color: #e69e18;
@@ -74,6 +98,12 @@
   cursor: pointer;
 }
 
+.courses-list-header i {
+  font-size: 1.25rem;
+  margin-top: .25rem;
+  margin-bottom: .25rem;
+}
+
 .courses-list-item.card {
   margin-bottom: 1rem;
   cursor: pointer;
@@ -83,7 +113,6 @@
 .course-code-badge {
   background-color: #e69e18 !important;
   font-size: 0.9rem;
-  margin-bottom: 0.3rem;
 }
 
 .course-name {
@@ -91,9 +120,18 @@
   font-weight: 500;
 }
 
+.course-info {
+    display: flex;
+    justify-content: space-around;
+}
+
 .course-info p,
 .course-description p {
   margin-bottom: 0.2rem;
+}
+
+.course-description {
+  padding-top: calc(var(--bs-gutter-x) * .5);
 }
 
 .study-plan-list {
@@ -113,7 +151,7 @@
 }
 
 .study-plan-head {
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   padding-right: 0;
 }
 

@@ -14,6 +14,7 @@ class Course {
     code,
     name,
     credits,
+    enrolledStudents = 0,
     maxStudents = null,
     preparatoryCourse = null,
     incompatibleCourses = []
@@ -21,17 +22,10 @@ class Course {
     this.code = code;
     this.name = name;
     this.credits = credits;
+    this.enrolledStudents = enrolledStudents;
     this.maxStudents = maxStudents;
     this.preparatoryCourse = preparatoryCourse;
     this.incompatibleCourses = incompatibleCourses;
-  }
-
-  /**
-   * Sets the courses that are incompatible with the current course
-   * @param {Course[]} incompatibleCourses List of courses that are incompatible with this course
-   */
-  static setIncompatibleCourses(courses) {
-    courses.forEach(() => {});
   }
 }
 

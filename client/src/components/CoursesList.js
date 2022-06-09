@@ -1,7 +1,10 @@
-import { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import { useState, Text } from "react";
 import {
   Badge,
   Card,
+  Col,
   Container,
   OverlayTrigger,
   Tooltip,
@@ -11,12 +14,27 @@ import {
 
 function CoursesList(props) {
   const [pagination, setPagination] = useState(1);
+  const elementsPerPage = 10;
 
   return (
     <Container fluid="xxl">
+      <h3 className="courses-list-header">
+        Courses List
+        <OverlayTrigger
+          key={"course-list-info"}
+          placement={`top`}
+          overlay={
+            <Tooltip id={`tooltip-course-code`}>
+              Click on a course to show its description
+            </Tooltip>
+          }
+        >
+          <i className="ms-3 bi bi-info-circle-fill"></i>
+        </OverlayTrigger>
+      </h3>
       <Row>
         {props.list.map((course, index) => {
-          const page = Math.ceil((index + 1) / 5);
+          const page = Math.ceil((index + 1) / elementsPerPage);
           return page === pagination ? (
             <CoursesListItem key={course.code} index={index} course={course} />
           ) : null;
@@ -24,6 +42,7 @@ function CoursesList(props) {
       </Row>
       <CoursesListPagination
         pagination={pagination}
+        elementsPerPage={elementsPerPage}
         setPagination={setPagination}
         list={props.list}
       />
@@ -31,14 +50,24 @@ function CoursesList(props) {
   );
 }
 
-function CoursesListPagination({ pagination, setPagination, list }) {
+function CoursesListPagination({
+  pagination,
+  elementsPerPage,
+  setPagination,
+  list,
+}) {
   const paginationItems = [];
-  const pages = list.length % 5 != 0 ? list.length / 5 + 1 : list.length / 5;
+  const pages =
+    list.length % elementsPerPage != 0
+      ? list.length / elementsPerPage + 1
+      : list.length / elementsPerPage;
   paginationItems.push(
     <Pagination.Prev
       key="prev"
       onClick={() =>
-        pagination - 1 >= 1 ? setPagination(pagination - 1) : null
+        pagination - 1 >= 1
+          ? setPagination((pagination) => pagination - 1)
+          : null
       }
       disabled={pagination - 1 >= 1 ? false : true}
     />
@@ -58,7 +87,9 @@ function CoursesListPagination({ pagination, setPagination, list }) {
     <Pagination.Next
       key="next"
       onClick={() =>
-        pagination + 1 <= pages ? setPagination(pagination + 1) : null
+        pagination + 1 <= pages
+          ? setPagination((pagination) => pagination + 1)
+          : null
       }
       disabled={pagination + 1 <= pages ? false : true}
     />
@@ -80,6 +111,17 @@ function CoursesListItem({ index, course }) {
     setExpanded(!expanded);
   };
 
+  const columnsWidth = {
+    code: { xs: 12, sm: 6, md: 2, lg: 1, xl: 1 },
+    name: { xs: 12, sm: 6, md: 4, lg: 5, xl: 5 },
+    credits: { xs: 12, sm: 4, md: 1, lg: 1, xl: 1 },
+    info: {
+      enrolledStudents: { xs: 6, sm: 4, md: 1, lg: 1, xl: 1 },
+      maxStudents: { xs: 6, sm: 4, md: 2, lg: 1, xl: 1 },
+    },
+    actions: { xs: 12, sm: 12, md: 2, lg: 3, xl: 3 },
+  };
+
   return (
     <Card
       key={index}
@@ -87,64 +129,149 @@ function CoursesListItem({ index, course }) {
       onClick={() => toggleExpanded()}
     >
       <Card.Body>
-        <CourseCode index={index} code={course.code} />
-        <CourseName name={course.name} />
-        <CourseCredits credits={course.credits} />
-        <CourseInfo course={course} />
-        {expanded && <CourseDescription course={course} />}
+        <Row className="align-items-center" sm={12}>
+          <CourseCode
+            cols={columnsWidth.code}
+            index={index}
+            code={course.code}
+          />
+          <CourseName cols={columnsWidth.name} name={course.name} />
+          <CourseCredits cols={columnsWidth.credits} credits={course.credits} />
+          <CourseInfo cols={columnsWidth.info} course={course} index={index} />
+          <CourseActions cols={columnsWidth.actions} />
+          {expanded && <CourseDescription course={course} />}
+        </Row>
       </Card.Body>
     </Card>
   );
 }
 
-function CourseCode({ index, code }) {
+function CourseCode({ cols, index, code }) {
   return (
-    <div>
+    <Col
+      xs={cols.xs}
+      sm={cols.sm}
+      md={cols.md}
+      lg={cols.lg}
+      xl={cols.xl}
+      className="my-1 my-md-0 px-0"
+    >
       <OverlayTrigger
         key={`course-code-${index}`}
-        placement={`left`}
+        placement={`bottom`}
         overlay={<Tooltip id={`tooltip-course-code`}>Course Code</Tooltip>}
       >
         <Badge className="course-code-badge me-3">{code}</Badge>
       </OverlayTrigger>
-    </div>
+    </Col>
   );
 }
 
-function CourseName({ name }) {
-  return <Card.Title>{name}</Card.Title>;
-}
-
-function CourseCredits({ credits }) {
+function CourseName({ cols, name }) {
   return (
-    <Card.Subtitle className="mb-2 text-muted">{credits} CFU</Card.Subtitle>
-  );
-}
-
-function CourseInfo({ course }) {
-  return (
-    <Card.Text
-      as="div"
-      key={`course-info-${course.code}`}
-      className="course-info"
+    <Col
+      xs={cols.xs}
+      sm={cols.sm}
+      md={cols.md}
+      lg={cols.lg}
+      xl={cols.xl}
+      className="my-1 my-md-0 px-0"
     >
-      {course.maxStudents ? (
-        <div className="course-students">
-          <i className="bi bi-diverson-check-fill"></i> {course.maxStudents}{" "}
-          Students Enrolled
-        </div>
-      ) : null}
-      {course.maxStudents ? (
-        <div className="course-max-students">
-          <i className="bi bi-diveople-fill"></i> {course.maxStudents} Max
-          Students
-        </div>
-      ) : null}
-    </Card.Text>
+      <Card.Title className="mb-1">{name}</Card.Title>
+    </Col>
   );
 }
 
-function CourseDescription({ course }) {
+function CourseCredits({ cols, credits }) {
+  return (
+    <Col
+      xs={cols.xs}
+      sm={cols.sm}
+      md={cols.md}
+      lg={cols.lg}
+      xl={cols.xl}
+      className="my-1 my-md-0 px-0"
+    >
+      <Card.Subtitle className="text-muted">{credits} CFU</Card.Subtitle>
+    </Col>
+  );
+}
+
+function CourseInfo({ cols, course, index }) {
+  return (
+    <>
+      <Col
+        xs={cols.enrolledStudents.xs}
+        sm={cols.enrolledStudents.sm}
+        md={cols.enrolledStudents.md}
+        lg={cols.enrolledStudents.lg}
+        xl={cols.enrolledStudents.xl}
+        className="my-1 my-md-0 px-0 justify-content-between"
+      >
+        <Card.Subtitle
+          as="div"
+          key={`course-enrolled-students-${course.code}`}
+          className="course-info"
+        >
+          <OverlayTrigger
+            key={`course-students-${index}`}
+            placement={`bottom`}
+            overlay={
+              <Tooltip id={`tooltip-course-code`}>Enrolled Students</Tooltip>
+            }
+          >
+            <span className="course-students">
+              <i className="bi bi-person-check-fill"></i>{" "}
+              {course.enrolledStudents}{" "}
+            </span>
+          </OverlayTrigger>
+        </Card.Subtitle>
+      </Col>
+      <Col
+        xs={cols.maxStudents.xs}
+        sm={cols.maxStudents.sm}
+        md={cols.maxStudents.md}
+        lg={cols.maxStudents.lg}
+        xl={cols.maxStudents.xl}
+        className="my-1 my-md-0 px-0 justify-content-between"
+      >
+        {course.maxStudents && (
+          <Card.Subtitle
+            as="div"
+            key={`course-max-students-${course.code}`}
+            className="course-info"
+          >
+            <OverlayTrigger
+              key={`course-max-students-${index}`}
+              placement={`bottom`}
+              overlay={
+                <Tooltip id={`tooltip-course-code`}>
+                  Max Enrollable Students
+                </Tooltip>
+              }
+            >
+              <span
+                className={`course-max-students ${
+                  !course.maxStudents ? "hidden" : ""
+                }`}
+              >
+                <i className="bi bi-people-fill"></i> {course.maxStudents}
+              </span>
+            </OverlayTrigger>
+          </Card.Subtitle>
+        )}
+      </Col>
+    </>
+  );
+}
+
+function CourseActions({ cols }) {
+  return (
+    <Col xs={cols.xs} sm={cols.sm} md={cols.md} lg={cols.lg} xl={cols.xl}></Col>
+  );
+}
+
+function CourseDescription({ cols, course }) {
   return (
     <Card.Text
       as="div"

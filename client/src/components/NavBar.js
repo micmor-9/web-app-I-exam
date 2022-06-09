@@ -1,14 +1,14 @@
-import React from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Container, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { UserActions } from "./AuthComponents";
 import "../App.css";
 
-function NavBar() {
+function NavBar({ loggedIn, user, logout }) {
   return (
     <Navbar bg="white" expand="md" className="main-navbar">
-      <Container fluid="xxl">
+      <Container fluid="xxl" className="d-flex align-items-center">
         <Navbar.Brand>
           <Link to="/">
             <h3>
@@ -21,9 +21,13 @@ function NavBar() {
           id="responsive-navbar-study-plan"
           className="justify-content-end"
         >
-          <Link to="/login">
-            <Button variant="outline-study">Login</Button>
-          </Link>
+          {loggedIn ? (
+            <UserActions user={user} logout={logout} />
+          ) : (
+            <Link to="/login">
+              <Button variant="outline-study">Login</Button>
+            </Link>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

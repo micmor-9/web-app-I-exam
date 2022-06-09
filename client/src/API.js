@@ -13,6 +13,7 @@ const getAllCourses = async () => {
           course.code,
           course.name,
           course.credits,
+          course.enrolledStudents,
           course.maxStudents,
           course.preparatoryCourse,
           course.incompatibleCourses
@@ -21,44 +22,47 @@ const getAllCourses = async () => {
   } else throw coursesJson;
 };
 
-/* const addExam = async (exam) => {
-  // handling the laude
-  if(exam.score === 31) {
-    exam.score = 30;
-    exam.laude = true;
-  }
-  else exam.laude = false;
+/*** AUTHENTICATION APIs ***/
 
-  const response = await fetch(SERVER_URL + '/api/exams', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ code: exam.code, score: exam.score, laude: exam.laude, date:exam.date.format('YYYY-MM-DD') })
+const logIn = async (credentials) => {
+  const response = await fetch(SERVER_URL + "/api/sessions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(credentials),
   });
-
-  if(!response.ok){
-    const errMessage = await response.json();
-    throw errMessage;
+  if (response.ok) {
+    const user = await response.json();
+    return user;
+  } else {
+    const errDetails = await response.text();
+    throw errDetails;
   }
-  else return null;
-  // add other error handling
-}
+};
 
-const deleteExam = async (courseCode) => {
-  try {
-    const response = await fetch(`${SERVER_URL}/api/exams/${courseCode}`, {
-      method: 'DELETE'
-    });
-    if(response.ok)
-      return null;
-    else {
-      const errMessage = await response.json();
-      throw errMessage;
-    }
-  } catch(err){
-    throw new Error('Cannot communicate with the server');
-    // and/or we can get some info from the 'err' object
+const getUserInfo = async () => {
+  const response = await fetch(SERVER_URL + "/api/sessions/current", {
+    credentials: "include",
+  });
+  const user = await response.json();
+  if (response.ok) {
+    return user;
+  } else {
+    throw user; // an object with the error coming from the server
   }
-} */
+};
 
-const API = { getAllCourses };
+const logOut = async () => {
+  const response = await fetch(SERVER_URL + "/api/sessions/current", {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (response.ok) return null;
+};
+
+/******/
+
+const API = { getAllCourses, logIn, getUserInfo, logOut };
 export default API;
