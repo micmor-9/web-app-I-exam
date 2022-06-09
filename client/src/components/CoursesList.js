@@ -5,19 +5,71 @@ import {
   Container,
   OverlayTrigger,
   Tooltip,
+  Pagination,
+  Row,
 } from "react-bootstrap";
 
 function CoursesList(props) {
+  const [pagination, setPagination] = useState(1);
+
   return (
     <Container fluid="xxl">
-      {/* <Row xs={1} md={1} lg={1} xl={1}> */}
-      {props.list.map((course, index) => {
-        return (
-          <CoursesListItem key={course.code} index={index} course={course} />
-        );
-      })}
-      {/* </Row> */}
+      <Row>
+        {props.list.map((course, index) => {
+          const page = Math.ceil((index + 1) / 5);
+          return page === pagination ? (
+            <CoursesListItem key={course.code} index={index} course={course} />
+          ) : null;
+        })}
+      </Row>
+      <CoursesListPagination
+        pagination={pagination}
+        setPagination={setPagination}
+        list={props.list}
+      />
     </Container>
+  );
+}
+
+function CoursesListPagination({ pagination, setPagination, list }) {
+  const paginationItems = [];
+  const pages = list.length % 5 != 0 ? list.length / 5 + 1 : list.length / 5;
+  paginationItems.push(
+    <Pagination.Prev
+      key="prev"
+      onClick={() =>
+        pagination - 1 >= 1 ? setPagination(pagination - 1) : null
+      }
+      disabled={pagination - 1 >= 1 ? false : true}
+    />
+  );
+  for (let n = 1; n <= pages; n++) {
+    paginationItems.push(
+      <Pagination.Item
+        key={n}
+        active={n === pagination}
+        onClick={() => setPagination(n)}
+      >
+        {n}
+      </Pagination.Item>
+    );
+  }
+  paginationItems.push(
+    <Pagination.Next
+      key="next"
+      onClick={() =>
+        pagination + 1 <= pages ? setPagination(pagination + 1) : null
+      }
+      disabled={pagination + 1 <= pages ? false : true}
+    />
+  );
+
+  return (
+    <Row className="courses-list-pagination">
+      <Pagination className="justify-content-center">
+        {paginationItems}
+      </Pagination>
+    </Row>
   );
 }
 

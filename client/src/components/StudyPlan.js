@@ -27,7 +27,9 @@ function StudyPlan({ studyPlan }) {
 function StudyPlanList({ list }) {
   if (list) {
   } else {
-    return <div class="study-plan-list">No Study Plan has been defined</div>;
+    return (
+      <div className="study-plan-list">No Study Plan has been defined</div>
+    );
   }
 }
 

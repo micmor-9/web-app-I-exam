@@ -63,6 +63,17 @@
   padding-top: 1rem;
 }
 
+.page-item.active .page-link {
+  background-color: #e69e18;
+  border-color: #e69e18;
+  cursor: pointer;
+}
+
+.page-link, .page-link:hover, .page-link:focus {
+  color: #e69e18;
+  cursor: pointer;
+}
+
 .courses-list-item.card {
   margin-bottom: 1rem;
   cursor: pointer;
