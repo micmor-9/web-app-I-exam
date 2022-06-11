@@ -8,8 +8,7 @@ const cors = require('cors'); // Middleware to enable CORS support
 const {check, validationResult} = require('express-validator'); // Middleware for validation
 
 // DAO and Database Init
-const course_dao = require('./models/course_dao');
-const study_plan_dao = require('./models/study_plan_dao');
+const course_dao = require("./models/course_dao");
 const user_dao = require("./models/user_dao");
 
 // Passport-related imports

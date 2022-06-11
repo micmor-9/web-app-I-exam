@@ -13,17 +13,18 @@ import {
   DefaultRoute,
   LoginRoute,
   HomepageRoute,
-  StudyPlanCreateRoute,
 } from "./components/StudyPlanViews";
 
 // Import API
 import API from "./API";
+import { StudyPlanMode } from "./components/StudyPlan";
 
 function App() {
   const [coursesList, setCoursesList] = useState([]);
   const [studyPlan, setStudyPlan] = useState();
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
+  const [mode, setMode] = useState(StudyPlanMode.SHOW);
 
   const getCoursesList = async () => {
     const list = await API.getAllCourses();
@@ -34,7 +35,7 @@ function App() {
     const verifyAuthentication = () => {
       API.getUserInfo() // Gather user info from the session
         .then((user) => {
-          setCurrentUser({ ...user });
+          setCurrentUser(user);
           setLoggedIn(true);
         })
         .catch((err) => {
@@ -48,7 +49,7 @@ function App() {
 
   useEffect(() => {
     getCoursesList();
-  }, [loggedIn]);
+  }, []);
 
   const handleLogin = (credentials) => {
     return new Promise((resolve, reject) => {
@@ -106,10 +107,11 @@ function App() {
                 coursesList={coursesList}
                 studyPlan={studyPlan}
                 loggedIn={loggedIn}
+                mode={mode}
+                setMode={setMode}
               />
             }
           />
-          <Route path="/study-plan/create" element={<StudyPlanCreateRoute />} />
         </Routes>
       </Container>
       <ToastContainer />

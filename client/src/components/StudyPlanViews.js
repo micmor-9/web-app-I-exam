@@ -1,8 +1,7 @@
 import { Container, Row, Col, Button } from "react-bootstrap";
 import CoursesList from "./CoursesList";
 import { LoginForm } from "./AuthComponents";
-import StudyPlan from "./StudyPlan";
-import StudyPlanCreateForm from "./StudyPlanCreateForm";
+import { StudyPlan } from "./StudyPlan";
 
 function DefaultRoute() {
   return (
@@ -29,27 +28,19 @@ function HomepageRoute(props) {
       <Row id="content" className="justify-content-center">
         {props.loggedIn && (
           <Row id="studyPlanPanel">
-            <StudyPlan studyPlan={props.studyPlan} />
+            <StudyPlan
+              mode={props.mode}
+              setMode={props.setMode}
+              studyPlan={props.studyPlan}
+            />
           </Row>
         )}
         <Row id="coursesListPanel">
-          <CoursesList list={props.coursesList} />
+          <CoursesList list={props.coursesList} mode={props.mode} />
         </Row>
       </Row>
     </Container>
   );
 }
 
-function StudyPlanCreateRoute(props) {
-  return (
-    <Container fluid="xxl" className="App">
-      <Row id="content" className="justify-content-center">
-        <Row id="studyPlanCreateForm">
-          <StudyPlanCreateForm />
-        </Row>
-      </Row>
-    </Container>
-  );
-}
-
-export { DefaultRoute, LoginRoute, HomepageRoute, StudyPlanCreateRoute };
+export { DefaultRoute, LoginRoute, HomepageRoute };

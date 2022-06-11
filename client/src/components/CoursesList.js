@@ -1,8 +1,10 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { useState, Text } from "react";
+import { useState } from "react";
+import { StudyPlanMode } from "./StudyPlan";
 import {
   Badge,
+  Button,
   Card,
   Col,
   Container,
@@ -36,7 +38,12 @@ function CoursesList(props) {
         {props.list.map((course, index) => {
           const page = Math.ceil((index + 1) / elementsPerPage);
           return page === pagination ? (
-            <CoursesListItem key={course.code} index={index} course={course} />
+            <CoursesListItem
+              key={course.code}
+              index={index}
+              course={course}
+              mode={props.mode}
+            />
           ) : null;
         })}
       </Row>
@@ -104,22 +111,23 @@ function CoursesListPagination({
   );
 }
 
-function CoursesListItem({ index, course }) {
+function CoursesListItem({ index, course, mode }) {
   const [expanded, setExpanded] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const toggleExpanded = () => {
-    setExpanded(!expanded);
+    setExpanded((expanded) => !expanded);
   };
 
   const columnsWidth = {
     code: { xs: 12, sm: 6, md: 2, lg: 1, xl: 1 },
-    name: { xs: 12, sm: 6, md: 4, lg: 5, xl: 5 },
-    credits: { xs: 12, sm: 4, md: 1, lg: 1, xl: 1 },
+    name: { xs: 12, sm: 6, md: 5, lg: 6, xl: 6 },
+    credits: { xs: 12, sm: 4, md: 1, lg: 2, xl: 1 },
     info: {
       enrolledStudents: { xs: 6, sm: 4, md: 1, lg: 1, xl: 1 },
       maxStudents: { xs: 6, sm: 4, md: 2, lg: 1, xl: 1 },
     },
-    actions: { xs: 12, sm: 12, md: 2, lg: 3, xl: 3 },
+    actions: { xs: 12, sm: 12, md: 1, lg: 1, xl: 2 },
   };
 
   return (
@@ -138,7 +146,12 @@ function CoursesListItem({ index, course }) {
           <CourseName cols={columnsWidth.name} name={course.name} />
           <CourseCredits cols={columnsWidth.credits} credits={course.credits} />
           <CourseInfo cols={columnsWidth.info} course={course} index={index} />
-          <CourseActions cols={columnsWidth.actions} />
+          <CourseActions
+            cols={columnsWidth.actions}
+            mode={mode}
+            added={added}
+            setAdded={setAdded}
+          />
           {expanded && <CourseDescription course={course} />}
         </Row>
       </Card.Body>
@@ -265,13 +278,41 @@ function CourseInfo({ cols, course, index }) {
   );
 }
 
-function CourseActions({ cols }) {
+function CourseActions({ cols, mode, added, setAdded }) {
   return (
-    <Col xs={cols.xs} sm={cols.sm} md={cols.md} lg={cols.lg} xl={cols.xl}></Col>
+    <Col
+      xs={cols.xs}
+      sm={cols.sm}
+      md={cols.md}
+      lg={cols.lg}
+      xl={cols.xl}
+      className="text-center"
+    >
+      {(mode == StudyPlanMode.CREATE || mode == StudyPlanMode.EDIT) && (
+        <Button
+          variant={added ? "danger" : "outline-success"}
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            setAdded((added) => !added);
+          }}
+        >
+          {added ? (
+            <>
+              <i className="bi bi-x-lg"></i> Remove
+            </>
+          ) : (
+            <>
+              <i className="bi bi-plus-lg"></i> Add
+            </>
+          )}
+        </Button>
+      )}
+    </Col>
   );
 }
 
-function CourseDescription({ cols, course }) {
+function CourseDescription({ course }) {
   return (
     <Card.Text
       as="div"

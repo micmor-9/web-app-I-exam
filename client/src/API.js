@@ -1,5 +1,4 @@
 import Course from "./models/Course";
-import StudyPlan from "./models/StudyPlan";
 
 const SERVER_URL = "http://localhost:3001";
 
