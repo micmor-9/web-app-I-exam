@@ -36,7 +36,10 @@ const logIn = async (credentials) => {
     const user = await response.json();
     return user;
   } else {
-    const errDetails = await response.text();
+    let errDetails = {
+      message: await response.text(),
+      status: response.status,
+    };
     throw errDetails;
   }
 };

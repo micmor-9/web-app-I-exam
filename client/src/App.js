@@ -149,6 +149,8 @@ function App() {
       });
       return result;
     }
+
+    return true;
   };
 
   const addCourseToStudyPlan = (course) => {

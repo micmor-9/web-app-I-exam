@@ -23,7 +23,11 @@ function LoginForm(props) {
         })
         .catch((error) => {
           console.error(error);
-          Toast({ message: `Wrong email or password`, type: "error" });
+          if (error.status == 401) {
+            Toast({ message: `Wrong email or password`, type: "error" });
+          } else {
+            Toast({ message: `Server unavailable`, type: "error" });
+          }
         });
     }
     setValidated(true);
