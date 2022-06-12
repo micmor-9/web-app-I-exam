@@ -167,6 +167,12 @@
   text-align: center;
 }
 
+#create-study-plan-form .study-plan-list {
+  margin: 1rem;
+  padding: 3rem 1rem;
+  width: calc(100% - 2rem);
+}
+
 .study-plan-header {
   margin-bottom: 0;
 }
@@ -199,4 +205,12 @@
 #create-study-plan-form {
   padding-top: calc(var(--bs-gutter-x) * .5);
   padding-bottom: calc(var(--bs-gutter-x) * .5)
+}
+
+#study-plan-table td, #study-plan-table th {
+  text-align: center;
+}
+
+#study-plan-table tr:last-child td, #study-plan-table tr:last-child th {
+  border-bottom-width: 0px;
 }

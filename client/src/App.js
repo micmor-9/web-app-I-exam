@@ -22,6 +22,7 @@ import { StudyPlanMode } from "./components/StudyPlan";
 function App() {
   const [coursesList, setCoursesList] = useState([]);
   const [studyPlan, setStudyPlan] = useState();
+  const [studyPlanList, setStudyPlanList] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
   const [mode, setMode] = useState(StudyPlanMode.SHOW);
@@ -84,6 +85,18 @@ function App() {
     });
   };
 
+  const addCourseToStudyPlan = (course) => {
+    setStudyPlanList((studyPlanList) =>
+      [...studyPlanList, course].sort((a, b) => a.name.localeCompare(b.name))
+    );
+  };
+
+  const removeCourseFromStudyPlan = (course) => {
+    setStudyPlanList((studyPlanList) =>
+      studyPlanList.filter((c) => c.code !== course.code)
+    );
+  };
+
   return (
     <BrowserRouter>
       <Container id="rootContainer" fluid="xxxl">
@@ -109,6 +122,10 @@ function App() {
                 loggedIn={loggedIn}
                 mode={mode}
                 setMode={setMode}
+                addCourseToStudyPlan={addCourseToStudyPlan}
+                removeCourseFromStudyPlan={removeCourseFromStudyPlan}
+                studyPlanList={studyPlanList}
+                setStudyPlanList={setStudyPlanList}
               />
             }
           />

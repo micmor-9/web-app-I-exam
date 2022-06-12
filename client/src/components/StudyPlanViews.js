@@ -32,11 +32,21 @@ function HomepageRoute(props) {
               mode={props.mode}
               setMode={props.setMode}
               studyPlan={props.studyPlan}
+              setStudyPlan={props.setStudyPlan}
+              studyPlanList={props.studyPlanList}
+              setStudyPlanList={props.setStudyPlanList}
+              removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}
             />
           </Row>
         )}
         <Row id="coursesListPanel">
-          <CoursesList list={props.coursesList} mode={props.mode} />
+          <CoursesList
+            list={props.coursesList}
+            mode={props.mode}
+            studyPlanList={props.studyPlanList}
+            addCourseToStudyPlan={props.addCourseToStudyPlan}
+            removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}
+          />
         </Row>
       </Row>
     </Container>

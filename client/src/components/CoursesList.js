@@ -43,6 +43,9 @@ function CoursesList(props) {
               index={index}
               course={course}
               mode={props.mode}
+              studyPlanList={props.studyPlanList}
+              addCourseToStudyPlan={props.addCourseToStudyPlan}
+              removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}
             />
           ) : null;
         })}
@@ -111,7 +114,14 @@ function CoursesListPagination({
   );
 }
 
-function CoursesListItem({ index, course, mode }) {
+function CoursesListItem({
+  index,
+  course,
+  mode,
+  studyPlanList,
+  addCourseToStudyPlan,
+  removeCourseFromStudyPlan,
+}) {
   const [expanded, setExpanded] = useState(false);
   const [added, setAdded] = useState(false);
 
@@ -148,9 +158,11 @@ function CoursesListItem({ index, course, mode }) {
           <CourseInfo cols={columnsWidth.info} course={course} index={index} />
           <CourseActions
             cols={columnsWidth.actions}
+            course={course}
             mode={mode}
-            added={added}
-            setAdded={setAdded}
+            studyPlanList={studyPlanList}
+            addCourseToStudyPlan={addCourseToStudyPlan}
+            removeCourseFromStudyPlan={removeCourseFromStudyPlan}
           />
           {expanded && <CourseDescription course={course} />}
         </Row>
@@ -278,7 +290,14 @@ function CourseInfo({ cols, course, index }) {
   );
 }
 
-function CourseActions({ cols, mode, added, setAdded }) {
+function CourseActions({
+  cols,
+  course,
+  mode,
+  studyPlanList,
+  addCourseToStudyPlan,
+  removeCourseFromStudyPlan,
+}) {
   return (
     <Col
       xs={cols.xs}
@@ -288,26 +307,30 @@ function CourseActions({ cols, mode, added, setAdded }) {
       xl={cols.xl}
       className="text-center"
     >
-      {(mode == StudyPlanMode.CREATE || mode == StudyPlanMode.EDIT) && (
-        <Button
-          variant={added ? "danger" : "outline-success"}
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            setAdded((added) => !added);
-          }}
-        >
-          {added ? (
-            <>
-              <i className="bi bi-x-lg"></i> Remove
-            </>
-          ) : (
-            <>
-              <i className="bi bi-plus-lg"></i> Add
-            </>
-          )}
-        </Button>
-      )}
+      {(mode == StudyPlanMode.CREATE || mode == StudyPlanMode.EDIT) &&
+        (studyPlanList.filter((c) => c.code === course.code).length != 0 ? (
+          <Button
+            variant={"danger"}
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              removeCourseFromStudyPlan(course);
+            }}
+          >
+            <i className="bi bi-x-lg"></i> Remove
+          </Button>
+        ) : (
+          <Button
+            variant={"outline-success"}
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              addCourseToStudyPlan(course);
+            }}
+          >
+            <i className="bi bi-plus-lg"></i> Add
+          </Button>
+        ))}
     </Col>
   );
 }
@@ -319,7 +342,7 @@ function CourseDescription({ course }) {
       key={`course-description-${course.code}`}
       className="course-description"
     >
-      <p>Preliminary Course: {course.preliminaryCourse}</p>
+      <p>Preliminary Course: {course.preparatoryCourse}</p>
       <p>
         Incompatible{" "}
         {course.incompatibleCourses.length <= 1 ? "Course" : "Courses"}:{" "}
