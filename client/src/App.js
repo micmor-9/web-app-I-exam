@@ -75,6 +75,8 @@ function App() {
           setLoggedIn(false);
           setCurrentUser({});
           setStudyPlan();
+          setStudyPlanList([]);
+          setMode(StudyPlanMode.SHOW);
           resolve();
         })
         .catch((err) => {
