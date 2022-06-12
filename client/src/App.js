@@ -5,6 +5,7 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { ToastContainer } from "react-toastify";
+import { Toast } from "./components/Toast";
 import NavBar from "./components/NavBar";
 
 // Routes handling is done with react-router and a set of Views defined in the StudyPlanViews component
@@ -85,10 +86,80 @@ function App() {
     });
   };
 
+  const checkCoursesConstraints = (course) => {
+    // Check for preparatoryCourse
+    if (course.preparatoryCourse) {
+      const prepIndex = studyPlanList.find(
+        (c) => c.code === course.preparatoryCourse
+      );
+      if (prepIndex === undefined) {
+        const pc = coursesList.find(
+          (pc) => pc.code === course.preparatoryCourse
+        );
+        Toast({
+          message: (
+            <>
+              Can't add{" "}
+              <b>
+                {course.code} - {course.name}
+              </b>{" "}
+              to the Study Plan. You need its preparatory course{" "}
+              <b>
+                {pc.code} - {pc.name}
+              </b>
+            </>
+          ),
+          type: "warning",
+          duration: 8000,
+        });
+        return false;
+      }
+      return true;
+    }
+
+    // Check for incompatibleCourses
+    if (course.incompatibleCourses.length > 0) {
+      let result = true;
+      course.incompatibleCourses.forEach((incompatibleCourse, index) => {
+        const incompIndex = studyPlanList.find(
+          (c) => c.code === incompatibleCourse
+        );
+        if (incompIndex !== undefined) {
+          const ic = coursesList.find(
+            (ic) => ic.code === course.incompatibleCourses[index]
+          );
+          Toast({
+            message: (
+              <>
+                Can't add{" "}
+                <b>
+                  {course.code} - {course.name}
+                </b>{" "}
+                to the Study Plan. It is incompatible with{" "}
+                <b>
+                  {ic.code} - {ic.name}
+                </b>
+              </>
+            ),
+            type: "warning",
+            duration: 8000,
+          });
+          result = false;
+        }
+      });
+      return result;
+    }
+  };
+
   const addCourseToStudyPlan = (course) => {
-    setStudyPlanList((studyPlanList) =>
-      [...studyPlanList, course].sort((a, b) => a.name.localeCompare(b.name))
-    );
+    if (checkCoursesConstraints(course)) {
+      setStudyPlanList((studyPlanList) =>
+        [...studyPlanList, course].sort((a, b) => a.name.localeCompare(b.name))
+      );
+      return true;
+    } else {
+      return false;
+    }
   };
 
   const removeCourseFromStudyPlan = (course) => {

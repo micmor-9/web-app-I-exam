@@ -342,7 +342,7 @@ function CourseDescription({ course }) {
       key={`course-description-${course.code}`}
       className="course-description"
     >
-      <p>Preliminary Course: {course.preparatoryCourse}</p>
+      <p>Preparatory Course: {course.preparatoryCourse}</p>
       <p>
         Incompatible{" "}
         {course.incompatibleCourses.length <= 1 ? "Course" : "Courses"}:{" "}

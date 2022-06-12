@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   Card,
@@ -9,6 +9,7 @@ import {
   Row,
   Table,
 } from "react-bootstrap";
+import { Toast } from "./Toast";
 
 const StudyPlanMode = {
   SHOW: 0,
@@ -17,15 +18,41 @@ const StudyPlanMode = {
   PRECREATE: 3,
 };
 
+const CreditsConstraints = {
+  0: { min: 20, max: 40 },
+  1: { min: 60, max: 80 },
+};
+
+const validateCredits = (credits, option) => {
+  if (option === undefined) return false;
+  if (credits < CreditsConstraints[option].min) return false;
+  if (credits > CreditsConstraints[option].max) return false;
+  return true;
+};
+
 function StudyPlan({
   mode,
   setMode,
   studyPlan,
-  setStudyPlan,
   studyPlanList,
-  setStudyPlanList,
   removeCourseFromStudyPlan,
 }) {
+  const [studyPlanOption, setStudyPlanOption] = useState();
+  const [studyPlanCredits, setStudyPlanCredits] = useState(0);
+
+  useEffect(() => {
+    if (
+      studyPlanOption !== undefined &&
+      studyPlanCredits > CreditsConstraints[studyPlanOption].max
+    ) {
+      Toast({
+        message:
+          "You've reached the maximum amount of credits for your study plan. Remove an exam.",
+        type: "error",
+      });
+    }
+  }, [studyPlanCredits]);
+
   return (
     <Container>
       <Row className="study-plan-head justify-content-between align-items-center">
@@ -46,7 +73,11 @@ function StudyPlan({
             mode == StudyPlanMode.PRECREATE) && (
             <>
               <CancelStudyPlanBtn setMode={setMode} />
-              <SaveStudyPlanBtn setMode={setMode} />
+              <SaveStudyPlanBtn
+                setMode={setMode}
+                studyPlanOption={studyPlanOption}
+                studyPlanCredits={studyPlanCredits}
+              />
             </>
           )}
         </Col>
@@ -61,6 +92,10 @@ function StudyPlan({
             studyPlanList={studyPlanList}
             removeCourseFromStudyPlan={removeCourseFromStudyPlan}
             setMode={setMode}
+            studyPlanOption={studyPlanOption}
+            studyPlanCredits={studyPlanCredits}
+            setStudyPlanOption={setStudyPlanOption}
+            setStudyPlanCredits={setStudyPlanCredits}
           />
         )}
       </Row>
@@ -81,13 +116,22 @@ function CreateStudyPlanBtn({ setMode }) {
   );
 }
 
-function SaveStudyPlanBtn({ setMode }) {
+function SaveStudyPlanBtn({ setMode, studyPlanOption, studyPlanCredits }) {
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    validateCredits(studyPlanCredits, studyPlanOption)
+      ? setActive(true)
+      : setActive(false);
+  }, [studyPlanOption, studyPlanCredits]);
+
   return (
     <Button
       variant="study"
       onClick={() => {
         setMode(StudyPlanMode.SHOW);
       }}
+      disabled={!active}
     >
       <i className="bi bi-check-lg"></i> Save
     </Button>
@@ -108,9 +152,21 @@ function CancelStudyPlanBtn({ setMode }) {
   );
 }
 
-function StudyPlanForm({ studyPlanList, removeCourseFromStudyPlan, setMode }) {
-  const [studyPlanOption, setStudyPlanOption] = useState();
-  const [studyPlanCredits, setStudyPlanCredits] = useState(0);
+function StudyPlanForm({
+  studyPlanList,
+  removeCourseFromStudyPlan,
+  setMode,
+  studyPlanOption,
+  studyPlanCredits,
+  setStudyPlanOption,
+  setStudyPlanCredits,
+}) {
+  useEffect(() => {
+    const totalCredits = studyPlanList
+      .map((course) => course.credits)
+      .reduce((prev, curr) => prev + curr, 0);
+    setStudyPlanCredits(totalCredits);
+  }, [studyPlanList]);
 
   return (
     <Card id="create-study-plan-form">
@@ -144,17 +200,55 @@ function StudyPlanForm({ studyPlanList, removeCourseFromStudyPlan, setMode }) {
           </Col>
         </Row>
         {studyPlanOption !== undefined && (
-          <Row className="align-items-center">
-            <Col xs={12} md={6} lg={8} xl={10}>
-              <ProgressBar>
-                <ProgressBar striped variant="success" now={35} key={1} />
-              </ProgressBar>
-            </Col>
-            <Col xs={12} md={6} lg={4} xl={2}>
-              <h4 className="text-muted align-middle">
-                {studyPlanCredits}/60 CFU
-              </h4>
-            </Col>
+          <Row id="study-plan-progress">
+            <Row>
+              <Col className="mb-3">
+                A {studyPlanOption == 0 ? "Part Time" : "Full Time"} study plan
+                needs to have minimum {CreditsConstraints[studyPlanOption].min}{" "}
+                and maximum {CreditsConstraints[studyPlanOption].max} credits.
+              </Col>
+            </Row>
+            <Row className="align-items-center">
+              <Col>
+                <h4 className="text-muted text-start">0</h4>
+              </Col>
+              {studyPlanOption == 1 && (
+                <>
+                  <Col></Col>
+                  <Col></Col>
+                  <Col></Col>
+                </>
+              )}
+              <Col>
+                <h4 className="text-muted text-center">
+                  {CreditsConstraints[studyPlanOption].min}
+                </h4>
+              </Col>
+              <Col>
+                <h4 className="text-muted text-end">
+                  {studyPlanCredits}/{CreditsConstraints[studyPlanOption].max}{" "}
+                  CFU
+                </h4>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <ProgressBar className="flex-grow-1">
+                  <ProgressBar
+                    animated
+                    variant={
+                      validateCredits(studyPlanCredits, studyPlanOption)
+                        ? "success"
+                        : "danger"
+                    }
+                    now={
+                      (studyPlanCredits * 100) /
+                      CreditsConstraints[studyPlanOption].max
+                    }
+                  />
+                </ProgressBar>
+              </Col>
+            </Row>
           </Row>
         )}
       </Form>
