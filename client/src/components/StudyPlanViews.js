@@ -31,8 +31,6 @@ function HomepageRoute(props) {
             <StudyPlan
               mode={props.mode}
               setMode={props.setMode}
-              studyPlan={props.studyPlan}
-              setStudyPlan={props.setStudyPlan}
               studyPlanList={props.studyPlanList}
               setStudyPlanList={props.setStudyPlanList}
               removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}

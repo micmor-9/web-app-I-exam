@@ -3,7 +3,9 @@ import Course from "./models/Course";
 const SERVER_URL = "http://localhost:3001";
 
 const getAllCourses = async () => {
-  const response = await fetch(SERVER_URL + "/api/courses");
+  const response = await fetch(SERVER_URL + "/api/courses", {
+    method: "GET",
+  });
   const coursesJson = await response.json();
   if (response.ok) {
     return coursesJson.map(
@@ -19,6 +21,20 @@ const getAllCourses = async () => {
         )
     );
   } else throw coursesJson;
+};
+
+const createStudyPlan = async (list, option, credits) => {
+  const response = await fetch(SERVER_URL + "/api/study-plan", {
+    method: "POST",
+    body: {
+      list: JSON.stringify(list),
+      option: option,
+      credits: credits,
+    },
+  });
+  if (response.ok) {
+    return { status: 201 };
+  } else throw response.json();
 };
 
 /*** AUTHENTICATION APIs ***/

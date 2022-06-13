@@ -123,7 +123,6 @@ function CoursesListItem({
   removeCourseFromStudyPlan,
 }) {
   const [expanded, setExpanded] = useState(false);
-  const [added, setAdded] = useState(false);
 
   const toggleExpanded = () => {
     setExpanded((expanded) => !expanded);
@@ -342,11 +341,32 @@ function CourseDescription({ course }) {
       key={`course-description-${course.code}`}
       className="course-description"
     >
-      <p>Preparatory Course: {course.preparatoryCourse}</p>
       <p>
-        Incompatible{" "}
-        {course.incompatibleCourses.length <= 1 ? "Course" : "Courses"}:{" "}
-        {course.incompatibleCourses.join(", ")}
+        <span className="course-description-label">Preparatory Course:</span>{" "}
+        {course.preparatoryCourse.length > 0 ? (
+          <b>
+            {course.preparatoryCourse[0].code} -{" "}
+            {course.preparatoryCourse[0].name}
+          </b>
+        ) : (
+          <i>No preparatory course</i>
+        )}
+      </p>
+      <p>
+        <span className="course-description-label">
+          Incompatible{" "}
+          {course.incompatibleCourses.length <= 1 ? "Course" : "Courses"}:
+        </span>{" "}
+        {course.incompatibleCourses.length > 0 && (
+          <b>
+            {course.incompatibleCourses
+              .map((ic) => ic.code + " - " + ic.name)
+              .join(", ")}
+          </b>
+        )}
+        {!course.incompatibleCourses.length > 0 && (
+          <i>No incompatible courses</i>
+        )}
       </p>
     </Card.Text>
   );

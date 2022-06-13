@@ -33,8 +33,8 @@ const validateCredits = (credits, option) => {
 function StudyPlan({
   mode,
   setMode,
-  studyPlan,
   studyPlanList,
+  setStudyPlanList,
   removeCourseFromStudyPlan,
 }) {
   const [studyPlanOption, setStudyPlanOption] = useState();
@@ -66,17 +66,23 @@ function StudyPlan({
           </h3>
         </Col>
         <Col xs={6} sm={5} md={3} className="study-plan-btn-col">
-          {!studyPlan && mode == StudyPlanMode.SHOW && (
+          {studyPlanList.length === 0 && mode == StudyPlanMode.SHOW && (
             <CreateStudyPlanBtn setMode={setMode} />
           )}
           {(mode == StudyPlanMode.CREATE ||
             mode == StudyPlanMode.PRECREATE) && (
             <>
-              <CancelStudyPlanBtn setMode={setMode} />
+              <CancelStudyPlanBtn
+                setMode={setMode}
+                setStudyPlanOption={setStudyPlanOption}
+                setStudyPlanCredits={setStudyPlanCredits}
+                setStudyPlanList={setStudyPlanList}
+              />
               <SaveStudyPlanBtn
                 setMode={setMode}
                 studyPlanOption={studyPlanOption}
                 studyPlanCredits={studyPlanCredits}
+                studyPlanList={studyPlanList}
               />
             </>
           )}
@@ -86,8 +92,7 @@ function StudyPlan({
         {mode == StudyPlanMode.SHOW && (
           <StudyPlanList empty={true} studyPlanList={studyPlanList} />
         )}
-        {((!studyPlan && mode == StudyPlanMode.CREATE) ||
-          mode == StudyPlanMode.PRECREATE) && (
+        {(mode == StudyPlanMode.CREATE || mode == StudyPlanMode.PRECREATE) && (
           <StudyPlanForm
             studyPlanList={studyPlanList}
             removeCourseFromStudyPlan={removeCourseFromStudyPlan}
@@ -116,7 +121,12 @@ function CreateStudyPlanBtn({ setMode }) {
   );
 }
 
-function SaveStudyPlanBtn({ setMode, studyPlanOption, studyPlanCredits }) {
+function SaveStudyPlanBtn({
+  setMode,
+  studyPlanOption,
+  studyPlanCredits,
+  studyPlanList,
+}) {
   const [active, setActive] = useState(false);
 
   useEffect(() => {
@@ -138,12 +148,20 @@ function SaveStudyPlanBtn({ setMode, studyPlanOption, studyPlanCredits }) {
   );
 }
 
-function CancelStudyPlanBtn({ setMode }) {
+function CancelStudyPlanBtn({
+  setMode,
+  setStudyPlanOption,
+  setStudyPlanCredits,
+  setStudyPlanList,
+}) {
   return (
     <Button
       variant="study-secondary"
       onClick={() => {
         setMode(StudyPlanMode.SHOW);
+        setStudyPlanOption();
+        setStudyPlanCredits(0);
+        setStudyPlanList([]);
       }}
       className="me-3"
     >
@@ -311,18 +329,24 @@ function StudyPlanTable({ data, removeCourseFromStudyPlan = null }) {
                   <th scope="row">{course.code}</th>
                   <td>{course.name}</td>
                   <td>{course.credits}</td>
-                  <td>{course.enrolledStudents || "-"}</td>
+                  <td>{course.enrolledStudents || "0"}</td>
                   <td>{course.maxStudents || "-"}</td>
-                  <td>{course.preparatoryCourse || "-"}</td>
+                  <td>
+                    {course.preparatoryCourse.length === 0
+                      ? "-"
+                      : course.preparatoryCourse.map((course) => course.code)}
+                  </td>
                   <td>
                     {course.incompatibleCourses.length === 0
                       ? "-"
-                      : course.incompatibleCourses.join(", ")}
+                      : course.incompatibleCourses
+                          .map((course) => course.code)
+                          .join(", ")}
                   </td>
                   {removeCourseFromStudyPlan && (
                     <td>
                       <Button
-                        variant="danger"
+                        variant="outline-danger"
                         size="sm"
                         onClick={() => removeCourseFromStudyPlan(course)}
                       >

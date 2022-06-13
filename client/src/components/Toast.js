@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export function Toast({ message, type, duration = 5000 }) {
@@ -10,6 +10,7 @@ export function Toast({ message, type, duration = 5000 }) {
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
+    transition: Slide,
   };
 
   switch (type) {

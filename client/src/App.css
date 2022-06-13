@@ -5,6 +5,12 @@
   min-height: 100vh;
 }
 
+@media (min-width: 700px) {
+  :root {
+    --toastify-toast-width: 560px !important;
+  }
+}
+
 .container-xxxl {
   width: 100vw;
   padding-right: var(--bs-gutter-x, 0.75rem);
@@ -18,7 +24,8 @@
   margin-bottom: 1.5rem;
 }
 
-.bi, .navbar-brand h3 {
+.bi,
+.navbar-brand h3 {
   color: #b57c12;
 }
 
@@ -30,7 +37,8 @@
   color: #b57c12;
 }
 
-.nav-link:hover, .nav-link:focus {
+.nav-link:hover,
+.nav-link:focus {
   color: #e89f17;
 }
 
@@ -38,12 +46,20 @@
   background-color: #e89f17;
 }
 
+#user-nav-dropdown {
+  font-size: 1.2rem;
+}
+
+#user-nav-dropdown::after {
+  margin-left: 0.5rem;
+}
+
 .btn .bi {
   color: #ffffff;
 }
 
-.btn-outline-success i {
-  color: inherit !important
+.btn-outline-success i, .btn-outline-danger i {
+  color: inherit !important;
 }
 
 .main-navbar {
@@ -89,7 +105,9 @@
   background-color: #eeeeee;
 }
 
-.btn-study i, .btn-outline-study i, .btn-study-secondary i {
+.btn-study i,
+.btn-outline-study i,
+.btn-study-secondary i {
   color: inherit !important;
 }
 
@@ -115,15 +133,17 @@
   cursor: pointer;
 }
 
-.page-link, .page-link:hover, .page-link:focus {
+.page-link,
+.page-link:hover,
+.page-link:focus {
   color: #e69e18;
   cursor: pointer;
 }
 
 .courses-list-header i {
   font-size: 1.25rem;
-  margin-top: .25rem;
-  margin-bottom: .25rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .courses-list-item.card {
@@ -143,8 +163,8 @@
 }
 
 .course-info {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }
 
 .course-info p,
@@ -153,7 +173,11 @@
 }
 
 .course-description {
-  padding-top: calc(var(--bs-gutter-x) * .5);
+  padding-top: calc(var(--bs-gutter-x) * 0.5);
+}
+
+.course-description-label {
+  color: #b57c12;
 }
 
 .study-plan-list {
@@ -203,14 +227,16 @@
 }
 
 #create-study-plan-form {
-  padding-top: calc(var(--bs-gutter-x) * .5);
-  padding-bottom: calc(var(--bs-gutter-x) * .5)
+  padding-top: calc(var(--bs-gutter-x) * 0.5);
+  padding-bottom: calc(var(--bs-gutter-x) * 0.5);
 }
 
-#study-plan-table td, #study-plan-table th {
+#study-plan-table td,
+#study-plan-table th {
   text-align: center;
 }
 
-#study-plan-table tr:last-child td, #study-plan-table tr:last-child th {
+#study-plan-table tr:last-child td,
+#study-plan-table tr:last-child th {
   border-bottom-width: 0px;
 }

@@ -90,6 +90,7 @@ app.get('/api/study-plan/:id', (req, res) => {
 app.post(
   "/api/study-plan/",
   isLoggedIn,
+  check("list").isArray(),
   check("option").isInt({ min: 0, max: 1 }),
   check("credits").isInt({ min: 20, max: 80 }),
   check("studentId").isInt(),
@@ -130,7 +131,7 @@ app.post("/api/sessions", function (req, res, next) {
 // GET /api/sessions/current
 app.get("/api/sessions/current", isLoggedIn, (req, res) => {
   if (req.isAuthenticated()) {
-    res.json(req.user);
+    res.status(200).json(req.user);
   } else res.status(401).json({ error: "Not authenticated" });
 });
 

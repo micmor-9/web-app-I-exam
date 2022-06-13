@@ -57,7 +57,7 @@ function App() {
     return new Promise((resolve, reject) => {
       API.logIn(credentials)
         .then((user) => {
-          setCurrentUser({ ...user });
+          setCurrentUser({ user });
           setLoggedIn(true);
           resolve(user);
         })
@@ -90,13 +90,13 @@ function App() {
 
   const checkCoursesConstraints = (course) => {
     // Check for preparatoryCourse
-    if (course.preparatoryCourse) {
+    if (course.preparatoryCourse.length > 0) {
       const prepIndex = studyPlanList.find(
-        (c) => c.code === course.preparatoryCourse
+        (c) => c.code === course.preparatoryCourse[0].code
       );
       if (prepIndex === undefined) {
         const pc = coursesList.find(
-          (pc) => pc.code === course.preparatoryCourse
+          (pc) => pc.code === course.preparatoryCourse[0].code
         );
         Toast({
           message: (
@@ -124,11 +124,11 @@ function App() {
       let result = true;
       course.incompatibleCourses.forEach((incompatibleCourse, index) => {
         const incompIndex = studyPlanList.find(
-          (c) => c.code === incompatibleCourse
+          (c) => c.code === incompatibleCourse.code
         );
         if (incompIndex !== undefined) {
           const ic = coursesList.find(
-            (ic) => ic.code === course.incompatibleCourses[index]
+            (ic) => ic.code === course.incompatibleCourses[index].code
           );
           Toast({
             message: (
@@ -152,6 +152,26 @@ function App() {
       return result;
     }
 
+    // Check for maximum number of enrolledStudents
+    if (course.maxStudents) {
+      if (course.enrolledStudents === course.maxStudents) {
+        Toast({
+          message: (
+            <>
+              <b>
+                {course.code} - {course.name}
+              </b>{" "}
+              has already reached the maximum number of students enrolled.
+            </>
+          ),
+          type: "warning",
+          duration: 5000,
+        });
+        return false;
+      }
+      return true;
+    }
+
     return true;
   };
 
@@ -170,6 +190,29 @@ function App() {
     setStudyPlanList((studyPlanList) =>
       studyPlanList.filter((c) => c.code !== course.code)
     );
+  };
+
+  const saveStudyPlan = (
+    mode,
+    list,
+    option = undefined,
+    credits = undefined
+  ) => {
+    return new Promise((resolve, reject) => {
+      if (mode === StudyPlanMode.CREATE) {
+        API.createStudyPlan(list, option, credits, currentUser.id)
+          .then((result) => {
+            resolve(result);
+          })
+          .catch((err) => {
+            console.error(err);
+            reject(err);
+          });
+      }
+
+      if (mode === StudyPlanMode.EDIT) {
+      }
+    });
   };
 
   return (
