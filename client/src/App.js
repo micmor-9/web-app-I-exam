@@ -88,7 +88,8 @@ function App() {
     });
   };
 
-  const checkCoursesConstraints = (course) => {
+  //Mode: 0 ADD, 1 REMOVE
+  const beforeAddCourse = (course) => {
     // Check for preparatoryCourse
     if (course.preparatoryCourse.length > 0) {
       const prepIndex = studyPlanList.find(
@@ -175,8 +176,39 @@ function App() {
     return true;
   };
 
+  const beforeRemoveCourse = (course) => {
+    const isPreparatory = studyPlanList.find((c) => {
+      if (c.preparatoryCourse.length > 0) {
+        return c.preparatoryCourse[0].code === course.code;
+      }
+      return false;
+    });
+
+    if (isPreparatory === undefined) {
+      return true;
+    } else {
+      Toast({
+        message: (
+          <>
+            Can't remove{" "}
+            <b>
+              {course.code} - {course.name}
+            </b>{" "}
+            to the Study Plan. It is the preparatory course of{" "}
+            <b>
+              {isPreparatory.code} - {isPreparatory.name}
+            </b>
+          </>
+        ),
+        type: "warning",
+        duration: 5000,
+      });
+      return false;
+    }
+  };
+
   const addCourseToStudyPlan = (course) => {
-    if (checkCoursesConstraints(course)) {
+    if (beforeAddCourse(course)) {
       setStudyPlanList((studyPlanList) =>
         [...studyPlanList, course].sort((a, b) => a.name.localeCompare(b.name))
       );
@@ -187,9 +219,14 @@ function App() {
   };
 
   const removeCourseFromStudyPlan = (course) => {
-    setStudyPlanList((studyPlanList) =>
-      studyPlanList.filter((c) => c.code !== course.code)
-    );
+    if (beforeRemoveCourse(course)) {
+      setStudyPlanList((studyPlanList) =>
+        studyPlanList.filter((c) => c.code !== course.code)
+      );
+      return true;
+    } else {
+      return false;
+    }
   };
 
   const saveStudyPlan = (

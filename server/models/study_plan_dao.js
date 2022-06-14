@@ -13,10 +13,11 @@ exports.createStudyPlan = (list, option, credits, studentId) => {
   const study_plan = new StudyPlan(option, credits, studentId, list);
 
   return new Promise((resolve, reject) => {
-    if (study_plan.checkConsistency()) {
+    /* if (study_plan.checkConsistency()) {
     } else {
       reject({ status: 422 });
-    }
+    } */
+    resolve(study_plan.checkConsistency());
   }); /* 
 
   return new Promise((resolve, reject) => {
