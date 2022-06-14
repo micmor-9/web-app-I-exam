@@ -36,6 +36,7 @@ function StudyPlan({
   studyPlanList,
   setStudyPlanList,
   removeCourseFromStudyPlan,
+  saveStudyPlan,
 }) {
   const [studyPlanOption, setStudyPlanOption] = useState();
   const [studyPlanCredits, setStudyPlanCredits] = useState(0);
@@ -79,10 +80,12 @@ function StudyPlan({
                 setStudyPlanList={setStudyPlanList}
               />
               <SaveStudyPlanBtn
+                mode={mode}
                 setMode={setMode}
                 studyPlanOption={studyPlanOption}
                 studyPlanCredits={studyPlanCredits}
                 studyPlanList={studyPlanList}
+                saveStudyPlan={saveStudyPlan}
               />
             </>
           )}
@@ -122,10 +125,12 @@ function CreateStudyPlanBtn({ setMode }) {
 }
 
 function SaveStudyPlanBtn({
+  mode,
   setMode,
   studyPlanOption,
   studyPlanCredits,
   studyPlanList,
+  saveStudyPlan,
 }) {
   const [active, setActive] = useState(false);
 
@@ -139,7 +144,15 @@ function SaveStudyPlanBtn({
     <Button
       variant="study"
       onClick={() => {
-        setMode(StudyPlanMode.SHOW);
+        saveStudyPlan(
+          mode,
+          studyPlanList,
+          studyPlanOption,
+          studyPlanCredits
+        ).then((res) => {
+          console.log(res);
+          setMode(StudyPlanMode.SHOW);
+        });
       }}
       disabled={!active}
     >

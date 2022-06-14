@@ -23,13 +23,14 @@ const getAllCourses = async () => {
   } else throw coursesJson;
 };
 
-const createStudyPlan = async (list, option, credits) => {
+const createStudyPlan = async (list, option, credits, student) => {
   const response = await fetch(SERVER_URL + "/api/study-plan", {
     method: "POST",
     body: {
       list: JSON.stringify(list),
       option: option,
       credits: credits,
+      student: student,
     },
   });
   if (response.ok) {
@@ -82,5 +83,5 @@ const logOut = async () => {
 
 /******/
 
-const API = { getAllCourses, logIn, getUserInfo, logOut };
+const API = { getAllCourses, logIn, getUserInfo, logOut, createStudyPlan };
 export default API;

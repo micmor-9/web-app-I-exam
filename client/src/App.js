@@ -244,6 +244,7 @@ function App() {
                 removeCourseFromStudyPlan={removeCourseFromStudyPlan}
                 studyPlanList={studyPlanList}
                 setStudyPlanList={setStudyPlanList}
+                saveStudyPlan={saveStudyPlan}
               />
             }
           />

@@ -10,6 +10,7 @@ const {check, validationResult} = require('express-validator'); // Middleware fo
 // DAO and Database Init
 const course_dao = require("./models/course_dao");
 const user_dao = require("./models/user_dao");
+const study_plan_dao = require("./models/study_plan_dao");
 
 // Passport-related imports
 const passport = require("passport");
@@ -93,7 +94,7 @@ app.post(
   check("list").isArray(),
   check("option").isInt({ min: 0, max: 1 }),
   check("credits").isInt({ min: 20, max: 80 }),
-  check("studentId").isInt(),
+  check("student").isInt(),
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -101,7 +102,12 @@ app.post(
     }
 
     study_plan_dao
-      .createStudyPlan(req.body.option, req.body.credits, req.body.studentId)
+      .createStudyPlan(
+        req.body.list,
+        req.body.option,
+        req.body.credits,
+        req.body.studentId
+      )
       .then(() => res.status(201).end())
       .catch((err) => res.status(err.statusCode).json(err));
   }

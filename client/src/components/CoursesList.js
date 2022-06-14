@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StudyPlanMode } from "./StudyPlan";
 import {
   Badge,
@@ -42,6 +42,7 @@ function CoursesList(props) {
               key={course.code}
               index={index}
               course={course}
+              coursesList={props.list}
               mode={props.mode}
               studyPlanList={props.studyPlanList}
               addCourseToStudyPlan={props.addCourseToStudyPlan}
@@ -117,16 +118,75 @@ function CoursesListPagination({
 function CoursesListItem({
   index,
   course,
+  coursesList,
   mode,
   studyPlanList,
   addCourseToStudyPlan,
   removeCourseFromStudyPlan,
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [warning, setWarning] = useState();
 
   const toggleExpanded = () => {
     setExpanded((expanded) => !expanded);
   };
+
+  const checkCoursesConstraints = () => {
+    let message = [];
+
+    // Check for preparatoryCourse
+    if (course.preparatoryCourse.length > 0) {
+      const prepIndex = studyPlanList.find(
+        (c) => c.code === course.preparatoryCourse[0].code
+      );
+      if (prepIndex === undefined) {
+        const pc = coursesList.find(
+          (pc) => pc.code === course.preparatoryCourse[0].code
+        );
+        message.push(`
+          Can't add ${course.code} - ${course.name} to the Study Plan. You need its preparatory course ${pc.code} - ${pc.name}
+        `);
+      }
+    }
+
+    // Check for incompatibleCourses
+    if (course.incompatibleCourses.length > 0) {
+      course.incompatibleCourses.forEach((incompatibleCourse, index) => {
+        const incompIndex = studyPlanList.find(
+          (c) => c.code === incompatibleCourse.code
+        );
+        if (incompIndex !== undefined) {
+          const ic = coursesList.find(
+            (ic) => ic.code === course.incompatibleCourses[index].code
+          );
+          message.push(`
+            Can't add ${course.code} - ${course.name} to the Study Plan. It is incompatible with ${ic.code} - ${ic.name}
+          `);
+        }
+      });
+    }
+
+    // Check for maximum number of enrolledStudents
+    if (course.maxStudents) {
+      if (course.enrolledStudents === course.maxStudents) {
+        message.push(`
+          ${course.code} - ${course.name}
+          has already reached the maximum number of students enrolled.
+        `);
+      }
+    }
+
+    if (message.length !== 0) {
+      console.log(message);
+      setWarning(message.join("; "));
+    } else {
+      setWarning();
+    }
+  };
+
+  useEffect(() => {
+    checkCoursesConstraints();
+  }, [studyPlanList]);
 
   const columnsWidth = {
     code: { xs: 12, sm: 6, md: 2, lg: 1, xl: 1 },
@@ -142,7 +202,9 @@ function CoursesListItem({
   return (
     <Card
       key={index}
-      className="courses-list-item"
+      className={
+        warning ? "courses-list-item course-warning" : "courses-list-item"
+      }
       onClick={() => toggleExpanded()}
     >
       <Card.Body>
@@ -152,7 +214,12 @@ function CoursesListItem({
             index={index}
             code={course.code}
           />
-          <CourseName cols={columnsWidth.name} name={course.name} />
+          <CourseName
+            cols={columnsWidth.name}
+            name={course.name}
+            index={index}
+            warning={warning}
+          />
           <CourseCredits cols={columnsWidth.credits} credits={course.credits} />
           <CourseInfo cols={columnsWidth.info} course={course} index={index} />
           <CourseActions
@@ -191,7 +258,7 @@ function CourseCode({ cols, index, code }) {
   );
 }
 
-function CourseName({ cols, name }) {
+function CourseName({ cols, name, index, warning }) {
   return (
     <Col
       xs={cols.xs}
@@ -201,7 +268,18 @@ function CourseName({ cols, name }) {
       xl={cols.xl}
       className="my-1 my-md-0 px-0"
     >
-      <Card.Title className="mb-1">{name}</Card.Title>
+      <Card.Title className="mb-1">
+        {name}
+        {warning && (
+          <OverlayTrigger
+            key={`course-warning-${index}`}
+            placement={`right`}
+            overlay={<Tooltip id={`tooltip-course-code`}>{warning}</Tooltip>}
+          >
+            <i className="bi bi-exclamation-triangle-fill ms-2"></i>
+          </OverlayTrigger>
+        )}
+      </Card.Title>
     </Col>
   );
 }

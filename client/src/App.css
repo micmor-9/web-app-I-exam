@@ -146,10 +146,19 @@
   margin-bottom: 0.25rem;
 }
 
+.card {
+  box-shadow: #efefef 1px 1px 10px;
+}
+
 .courses-list-item.card {
   margin-bottom: 1rem;
   cursor: pointer;
   /* height: 90%; */
+}
+
+.course-warning.card {
+  border: #e89f17 1px solid;
+  border-left-width: 5px;
 }
 
 .course-code-badge {
