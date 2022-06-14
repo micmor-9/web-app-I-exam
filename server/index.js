@@ -91,7 +91,7 @@ app.get('/api/study-plan/:id', (req, res) => {
 app.post(
   "/api/study-plan/",
   isLoggedIn,
-  check("list").isArray(),
+  check("list").isJSON(),
   check("option").isInt({ min: 0, max: 1 }),
   check("credits").isInt({ min: 20, max: 80 }),
   check("student").isInt(),

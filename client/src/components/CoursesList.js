@@ -177,7 +177,6 @@ function CoursesListItem({
     }
 
     if (message.length !== 0) {
-      console.log(message);
       setWarning(message.join("; "));
     } else {
       setWarning();
@@ -203,7 +202,9 @@ function CoursesListItem({
     <Card
       key={index}
       className={
-        warning ? "courses-list-item course-warning" : "courses-list-item"
+        (mode == StudyPlanMode.CREATE || mode == StudyPlanMode.EDIT) && warning
+          ? "courses-list-item course-warning"
+          : "courses-list-item"
       }
       onClick={() => toggleExpanded()}
     >
@@ -219,6 +220,7 @@ function CoursesListItem({
             name={course.name}
             index={index}
             warning={warning}
+            mode={mode}
           />
           <CourseCredits cols={columnsWidth.credits} credits={course.credits} />
           <CourseInfo cols={columnsWidth.info} course={course} index={index} />
@@ -258,7 +260,7 @@ function CourseCode({ cols, index, code }) {
   );
 }
 
-function CourseName({ cols, name, index, warning }) {
+function CourseName({ cols, name, index, warning, mode }) {
   return (
     <Col
       xs={cols.xs}
@@ -270,15 +272,16 @@ function CourseName({ cols, name, index, warning }) {
     >
       <Card.Title className="mb-1">
         {name}
-        {warning && (
-          <OverlayTrigger
-            key={`course-warning-${index}`}
-            placement={`right`}
-            overlay={<Tooltip id={`tooltip-course-code`}>{warning}</Tooltip>}
-          >
-            <i className="bi bi-exclamation-triangle-fill ms-2"></i>
-          </OverlayTrigger>
-        )}
+        {(mode == StudyPlanMode.CREATE || mode == StudyPlanMode.EDIT) &&
+          warning && (
+            <OverlayTrigger
+              key={`course-warning-${index}`}
+              placement={`right`}
+              overlay={<Tooltip id={`tooltip-course-code`}>{warning}</Tooltip>}
+            >
+              <i className="bi bi-exclamation-triangle-fill ms-2"></i>
+            </OverlayTrigger>
+          )}
       </Card.Title>
     </Col>
   );

@@ -213,7 +213,10 @@ function StudyPlanForm({
               name="study-plan-option"
               value={0}
               checked={studyPlanOption === 0}
-              onClick={() => setStudyPlanOption(0)}
+              onClick={() => {
+                setMode(StudyPlanMode.CREATE);
+                setStudyPlanOption(0);
+              }}
             >
               Part Time
             </ToggleButton>
@@ -225,7 +228,10 @@ function StudyPlanForm({
               name="study-plan-option"
               value={1}
               checked={studyPlanOption === 1}
-              onClick={() => setStudyPlanOption(1)}
+              onClick={() => {
+                setMode(StudyPlanMode.CREATE);
+                setStudyPlanOption(1);
+              }}
             >
               Full Time
             </ToggleButton>
@@ -361,7 +367,9 @@ function StudyPlanTable({ data, removeCourseFromStudyPlan = null }) {
                       <Button
                         variant="outline-danger"
                         size="sm"
-                        onClick={() => removeCourseFromStudyPlan(course)}
+                        onClick={() => {
+                          removeCourseFromStudyPlan(course);
+                        }}
                       >
                         <i className="bi bi-x-lg"></i>
                       </Button>
