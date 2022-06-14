@@ -26,16 +26,17 @@ const getAllCourses = async () => {
 const createStudyPlan = async (list, option, credits, student) => {
   const response = await fetch(SERVER_URL + "/api/study-plan", {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: {
+    body: JSON.stringify({
       list: JSON.stringify(list),
       option: option,
       credits: credits,
       student: student,
-    },
+    }),
   });
   if (response.ok) {
-    return { status: 201 };
+    return 201;
   } else throw response.json();
 };
 

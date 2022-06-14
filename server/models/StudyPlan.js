@@ -47,6 +47,7 @@ class StudyPlan {
   }
 
   checkConsistency() {
+    console.log(this.courses);
     if (this.courses.length > 0) {
       // Check credits consistency with option
       const totalCredits = this.courses
@@ -56,8 +57,8 @@ class StudyPlan {
       if (totalCredits != this.credits) return false;
 
       if (
-        this.credits < CreditsConstraints[this.option].min ||
-        this.credits > CreditsConstraints[this.option].max
+        this.credits < StudyPlan.CreditsConstraints[this.option].min ||
+        this.credits > StudyPlan.CreditsConstraints[this.option].max
       )
         return false;
 
@@ -67,13 +68,15 @@ class StudyPlan {
       });
 
       // Check preparatory and incompatible consistency
-      this.courses.forEach(function (course) {
+      this.courses.forEach((course) => {
         // Preparatory course
-        const prepIndex = this.courses.find(
-          (c) => c.code === course.preparatoryCourse[0].code
-        );
-        if (prepIndex === undefined) {
-          return false;
+        if (course.preparatoryCourse.length > 0) {
+          const prepIndex = this.courses.find(
+            (c) => c.code === course.preparatoryCourse[0].code
+          );
+          if (prepIndex === undefined) {
+            return false;
+          }
         }
 
         // Incompatible courses
@@ -87,7 +90,7 @@ class StudyPlan {
         });
       });
 
-      return false;
+      return true;
     }
   }
 }

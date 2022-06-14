@@ -106,10 +106,13 @@ app.post(
         req.body.list,
         req.body.option,
         req.body.credits,
-        req.body.studentId
+        req.body.student
       )
       .then(() => res.status(201).end())
-      .catch((err) => res.status(err.statusCode).json(err));
+      .catch((err) => {
+        console.error(err);
+        res.status(503).json(err).end();
+      });
   }
 );
 

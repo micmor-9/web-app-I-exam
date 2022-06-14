@@ -57,7 +57,7 @@ function App() {
     return new Promise((resolve, reject) => {
       API.logIn(credentials)
         .then((user) => {
-          setCurrentUser({ user });
+          setCurrentUser({ ...user });
           setLoggedIn(true);
           resolve(user);
         })

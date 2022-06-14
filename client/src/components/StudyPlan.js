@@ -153,6 +153,9 @@ function SaveStudyPlanBtn({
         ).then((res) => {
           console.log(res);
           setMode(StudyPlanMode.SHOW);
+        })
+        .catch((err) => {
+          console.error(err);
         });
       }}
       disabled={!active}
