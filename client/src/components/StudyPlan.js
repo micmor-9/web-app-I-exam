@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import {
   Button,
+  ButtonGroup,
   Card,
   Col,
   Container,
-  Form,
   ProgressBar,
   Row,
   Table,
+  ToggleButton,
 } from "react-bootstrap";
 import { Toast } from "./Toast";
 
@@ -201,88 +202,87 @@ function StudyPlanForm({
 
   return (
     <Card id="create-study-plan-form">
-      <Form>
-        <Row>
-          <Col xs={12}>
-            <Form.Group className="mb-3" controlId="studyPlanOption">
-              <Form.Check
-                inline
-                type="radio"
-                id={"part-time-option"}
-                name="study-plan-option"
-                label={"Part Time"}
-                onClick={() => {
-                  setMode(StudyPlanMode.CREATE);
-                  setStudyPlanOption(0);
-                }}
-              />
-              <Form.Check
-                inline
-                type="radio"
-                id={"full-time-option"}
-                name="study-plan-option"
-                label={"Full Time"}
-                onClick={() => {
-                  setMode(StudyPlanMode.CREATE);
-                  setStudyPlanOption(1);
-                }}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
-        {studyPlanOption !== undefined && (
-          <Row id="study-plan-progress">
-            <Row>
-              <Col className="mb-3">
-                A {studyPlanOption == 0 ? "Part Time" : "Full Time"} study plan
-                needs to have minimum {CreditsConstraints[studyPlanOption].min}{" "}
-                and maximum {CreditsConstraints[studyPlanOption].max} credits.
-              </Col>
-            </Row>
-            <Row className="align-items-center">
-              <Col>
-                <h4 className="text-muted text-start">0</h4>
-              </Col>
-              {studyPlanOption == 1 && (
-                <>
-                  <Col></Col>
-                  <Col></Col>
-                  <Col></Col>
-                </>
-              )}
-              <Col>
-                <h4 className="text-muted text-center">
-                  {CreditsConstraints[studyPlanOption].min}
-                </h4>
-              </Col>
-              <Col>
-                <h4 className="text-muted text-end">
-                  {studyPlanCredits}/{CreditsConstraints[studyPlanOption].max}{" "}
-                  CFU
-                </h4>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <ProgressBar className="flex-grow-1">
-                  <ProgressBar
-                    animated
-                    variant={
-                      validateCredits(studyPlanCredits, studyPlanOption)
-                        ? "success"
-                        : "danger"
-                    }
-                    now={
-                      (studyPlanCredits * 100) /
-                      CreditsConstraints[studyPlanOption].max
-                    }
-                  />
-                </ProgressBar>
-              </Col>
-            </Row>
+      <Row>
+        <Col xs={12}>
+          <ButtonGroup className="mb-3">
+            <ToggleButton
+              key={"part-time-option"}
+              id={"part-time-option"}
+              type="radio"
+              variant={studyPlanOption === 0 ? "study" : "outline-study"}
+              name="study-plan-option"
+              value={0}
+              checked={studyPlanOption === 0}
+              onClick={() => setStudyPlanOption(0)}
+            >
+              Part Time
+            </ToggleButton>
+            <ToggleButton
+              key={"full-time-option"}
+              id={"full-time-option"}
+              type="radio"
+              variant={studyPlanOption === 1 ? "study" : "outline-study"}
+              name="study-plan-option"
+              value={1}
+              checked={studyPlanOption === 1}
+              onClick={() => setStudyPlanOption(1)}
+            >
+              Full Time
+            </ToggleButton>
+          </ButtonGroup>
+        </Col>
+      </Row>
+      {studyPlanOption !== undefined && (
+        <Row id="study-plan-progress">
+          <Row>
+            <Col className="mb-3">
+              A {studyPlanOption == 0 ? "Part Time" : "Full Time"} study plan
+              needs to have minimum {CreditsConstraints[studyPlanOption].min}{" "}
+              and maximum {CreditsConstraints[studyPlanOption].max} credits.
+            </Col>
           </Row>
-        )}
-      </Form>
+          <Row className="align-items-center">
+            <Col>
+              <h4 className="text-muted text-start">0</h4>
+            </Col>
+            {studyPlanOption == 1 && (
+              <>
+                <Col></Col>
+                <Col></Col>
+                <Col></Col>
+              </>
+            )}
+            <Col>
+              <h4 className="text-muted text-center">
+                {CreditsConstraints[studyPlanOption].min}
+              </h4>
+            </Col>
+            <Col>
+              <h4 className="text-muted text-end">
+                {studyPlanCredits}/{CreditsConstraints[studyPlanOption].max} CFU
+              </h4>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <ProgressBar className="flex-grow-1">
+                <ProgressBar
+                  animated
+                  variant={
+                    validateCredits(studyPlanCredits, studyPlanOption)
+                      ? "success"
+                      : "danger"
+                  }
+                  now={
+                    (studyPlanCredits * 100) /
+                    CreditsConstraints[studyPlanOption].max
+                  }
+                />
+              </ProgressBar>
+            </Col>
+          </Row>
+        </Row>
+      )}
       {studyPlanOption !== undefined && (
         <Row>
           <StudyPlanList
