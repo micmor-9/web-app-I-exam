@@ -85,7 +85,7 @@ function App() {
 
   useEffect(() => {
     getCoursesList();
-  }, []);
+  }, [studyPlan]);
 
   useEffect(() => {
     getStudyPlan();
@@ -231,7 +231,7 @@ function App() {
             <b>
               {course.code} - {course.name}
             </b>{" "}
-            to the Study Plan. It is the preparatory course of{" "}
+            from the Study Plan. It is the preparatory course of{" "}
             <b>
               {isPreparatory.code} - {isPreparatory.name}
             </b>
@@ -276,6 +276,10 @@ function App() {
       if (mode === StudyPlanMode.CREATE) {
         API.createStudyPlan(list, option, credits, currentUser.id)
           .then((result) => {
+            Toast({
+              message: "Study Plan created successfully!",
+              type: "success",
+            });
             resolve(result);
           })
           .catch((err) => {
@@ -285,7 +289,34 @@ function App() {
       }
 
       if (mode === StudyPlanMode.EDIT) {
+        API.editStudyPlan(list, option, credits, currentUser.id)
+          .then((result) => {
+            Toast({
+              message: "Study Plan updated successfully!",
+              type: "success",
+            });
+            resolve(result);
+          })
+          .catch((err) => {
+            console.error(err);
+            reject(err);
+          });
       }
+    });
+  };
+
+  const deleteStudyPlan = () => {
+    return new Promise((resolve, reject) => {
+      API.deleteStudyPlan()
+        .then((result) => {
+          setStudyPlan();
+          setStudyPlanList([]);
+          resolve(result);
+        })
+        .catch((err) => {
+          console.error(err);
+          reject(err);
+        });
     });
   };
 
@@ -309,16 +340,17 @@ function App() {
             path="/"
             element={
               <HomepageRoute
+                loggedIn={loggedIn}
                 coursesList={coursesList}
                 studyPlan={studyPlan}
-                loggedIn={loggedIn}
+                studyPlanList={studyPlanList}
+                setStudyPlanList={setStudyPlanList}
                 mode={mode}
                 setMode={setMode}
                 addCourseToStudyPlan={addCourseToStudyPlan}
                 removeCourseFromStudyPlan={removeCourseFromStudyPlan}
-                studyPlanList={studyPlanList}
-                setStudyPlanList={setStudyPlanList}
                 saveStudyPlan={saveStudyPlan}
+                deleteStudyPlan={deleteStudyPlan}
               />
             }
           />

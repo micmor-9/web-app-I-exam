@@ -23,7 +23,17 @@ const getAllCourses = async () => {
   } else throw coursesJson;
 };
 
-const createStudyPlan = async (list, option, credits, student) => {
+const getStudyPlan = async () => {
+  const response = await fetch(SERVER_URL + "/api/study-plan", {
+    method: "GET",
+    credentials: "include",
+  });
+  if (response.ok) {
+    return response.json();
+  } else throw response.json();
+};
+
+const createStudyPlan = async (list, option, credits) => {
   const response = await fetch(SERVER_URL + "/api/study-plan", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -32,7 +42,6 @@ const createStudyPlan = async (list, option, credits, student) => {
       list: JSON.stringify(list),
       option: option,
       credits: credits,
-      student: student,
     }),
   });
   if (response.ok) {
@@ -40,13 +49,29 @@ const createStudyPlan = async (list, option, credits, student) => {
   } else throw response.json();
 };
 
-const getStudyPlan = async () => {
+const editStudyPlan = async (list, option, credits) => {
   const response = await fetch(SERVER_URL + "/api/study-plan", {
-    method: "GET",
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+      list: JSON.stringify(list),
+      option: option,
+      credits: credits,
+    }),
+  });
+  if (response.ok) {
+    return 200;
+  } else throw response.json();
+};
+
+const deleteStudyPlan = async () => {
+  const response = await fetch(SERVER_URL + "/api/study-plan", {
+    method: "DELETE",
     credentials: "include",
   });
   if (response.ok) {
-    return response.json();
+    return 204;
   } else throw response.json();
 };
 
@@ -97,10 +122,12 @@ const logOut = async () => {
 
 const API = {
   getAllCourses,
+  getStudyPlan,
+  createStudyPlan,
+  editStudyPlan,
+  deleteStudyPlan,
   logIn,
   getUserInfo,
   logOut,
-  createStudyPlan,
-  getStudyPlan,
 };
 export default API;

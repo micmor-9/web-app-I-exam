@@ -40,6 +40,7 @@ function StudyPlan({
   setStudyPlanList,
   removeCourseFromStudyPlan,
   saveStudyPlan,
+  deleteStudyPlan,
 }) {
   const [studyPlanOption, setStudyPlanOption] = useState();
   const [studyPlanCredits, setStudyPlanCredits] = useState(0);
@@ -89,6 +90,7 @@ function StudyPlan({
           studyPlanOption={studyPlanOption}
           studyPlanCredits={studyPlanCredits}
           saveStudyPlan={saveStudyPlan}
+          deleteStudyPlan={deleteStudyPlan}
         />
       </Row>
       <Row>
@@ -118,7 +120,7 @@ function StudyPlanInfo({ mode, studyPlan }) {
   return (
     <>
       {mode !== StudyPlanMode.PRECREATE && mode !== StudyPlanMode.CREATE && (
-        <Badge pill className="study-plan-option-badge mx-3">
+        <Badge pill bg="light" className="study-plan-option-badge mx-3">
           {studyPlan.option === 0 ? "PART TIME" : "FULL TIME"}
         </Badge>
       )}
@@ -151,51 +153,51 @@ function StudyPlanForm({
   return (
     <Card id="create-study-plan-form">
       {mode != StudyPlanMode.EDIT && (
-        <>
-          <Row>
-            <Col xs={12}>
-              <ButtonGroup className="mb-3">
-                <ToggleButton
-                  key={"part-time-option"}
-                  id={"part-time-option"}
-                  type="radio"
-                  variant={studyPlanOption === 0 ? "study" : "outline-study"}
-                  name="study-plan-option"
-                  value={0}
-                  checked={studyPlanOption === 0}
-                  onClick={() => {
-                    setMode(StudyPlanMode.CREATE);
-                    setStudyPlanOption(0);
-                  }}
-                >
-                  Part Time
-                </ToggleButton>
-                <ToggleButton
-                  key={"full-time-option"}
-                  id={"full-time-option"}
-                  type="radio"
-                  variant={studyPlanOption === 1 ? "study" : "outline-study"}
-                  name="study-plan-option"
-                  value={1}
-                  checked={studyPlanOption === 1}
-                  onClick={() => {
-                    setMode(StudyPlanMode.CREATE);
-                    setStudyPlanOption(1);
-                  }}
-                >
-                  Full Time
-                </ToggleButton>
-              </ButtonGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col className="mb-3">
-              A {studyPlanOption == 0 ? "Part Time" : "Full Time"} study plan
-              needs to have minimum {CreditsConstraints[studyPlanOption].min}{" "}
-              and maximum {CreditsConstraints[studyPlanOption].max} credits.
-            </Col>
-          </Row>
-        </>
+        <Row>
+          <Col xs={12}>
+            <ButtonGroup className="mb-3">
+              <ToggleButton
+                key={"part-time-option"}
+                id={"part-time-option"}
+                type="radio"
+                variant={studyPlanOption === 0 ? "study" : "outline-study"}
+                name="study-plan-option"
+                value={0}
+                checked={studyPlanOption === 0}
+                onClick={() => {
+                  setMode(StudyPlanMode.CREATE);
+                  setStudyPlanOption(0);
+                }}
+              >
+                Part Time
+              </ToggleButton>
+              <ToggleButton
+                key={"full-time-option"}
+                id={"full-time-option"}
+                type="radio"
+                variant={studyPlanOption === 1 ? "study" : "outline-study"}
+                name="study-plan-option"
+                value={1}
+                checked={studyPlanOption === 1}
+                onClick={() => {
+                  setMode(StudyPlanMode.CREATE);
+                  setStudyPlanOption(1);
+                }}
+              >
+                Full Time
+              </ToggleButton>
+            </ButtonGroup>
+          </Col>
+        </Row>
+      )}
+      {studyPlanOption !== undefined && (
+        <Row>
+          <Col className="mb-3">
+            A {studyPlanOption == 0 ? "Part Time" : "Full Time"} study plan
+            needs to have minimum {CreditsConstraints[studyPlanOption].min} and
+            maximum {CreditsConstraints[studyPlanOption].max} credits.
+          </Col>
+        </Row>
       )}
       {studyPlanOption !== undefined && (
         <Row id="study-plan-progress">
@@ -254,4 +256,4 @@ function StudyPlanForm({
   );
 }
 
-export { StudyPlan, StudyPlanMode, validateCredits };
+export { StudyPlan, StudyPlanMode, CreditsConstraints, validateCredits };

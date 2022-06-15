@@ -36,6 +36,7 @@ function HomepageRoute(props) {
               setStudyPlanList={props.setStudyPlanList}
               removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}
               saveStudyPlan={props.saveStudyPlan}
+              deleteStudyPlan={props.deleteStudyPlan}
             />
           </Row>
         )}

@@ -54,7 +54,7 @@
   margin-left: 0.5rem;
 }
 
-.btn-check:focus+.btn, .btn:focus {
+.btn-check:focus+.btn, .btn-primary:focus, .btn-study:focus, .btn-outline-primary:focus, .btn-study-secondary:focus {
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(253, 189, 13, 0.25);
 }
@@ -171,7 +171,16 @@
   font-size: 0.9rem;
 }
 
-.study-plan-option-badge, .study-plan-credits-badge {
+.study-plan-option-badge {
+  background-color: #ffffff;
+  border: #edbb5f solid 2px;
+  color: #edbb5f !important;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.study-plan-credits-badge {
+  border: #edbb5f solid 2px;
   background-color: #edbb5f !important;
   cursor: pointer;
   font-size: 0.8rem;
@@ -198,6 +207,10 @@
 
 .course-description-label {
   color: #b57c12;
+}
+
+#studyPlanPanel .col-12 {
+  overflow-x: scroll;
 }
 
 .study-plan-list {

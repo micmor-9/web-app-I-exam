@@ -80,21 +80,26 @@ app.get("/api/courses", (req, res) => {
     .catch((err) => res.status(500).json(err));
 });
 
-/* // GET /api/study-plan - Get the single study plan
-app.get('/api/study-plan/:id', (req, res) => {
-  study_plan_dao.getStudyPlan(req.params.id)
-  .then(study_plan => res.json(study_plan))
-  .catch((err) => res.status(err.statusCode).json(err));
-}) */
+// GET /api/study-plan/ - Get the study plan of the current user
+app.get("/api/study-plan/", isLoggedIn, (req, res) => {
+  const user = req.user;
 
-// POST /api/study-plan/create - Create a new study plan
+  study_plan_dao
+    .getStudyPlan(user)
+    .then((result) => res.status(200).json(result).end())
+    .catch((err) => {
+      console.error(err);
+      res.status(503).json(err).end();
+    });
+});
+
+// POST /api/study-plan/ - Create a new study plan
 app.post(
   "/api/study-plan/",
   isLoggedIn,
   check("list").isJSON(),
   check("option").isInt({ min: 0, max: 1 }),
   check("credits").isInt({ min: 20, max: 80 }),
-  check("student").isInt(),
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -106,7 +111,7 @@ app.post(
         req.body.list,
         req.body.option,
         req.body.credits,
-        req.body.student
+        req.user
       )
       .then(() => res.status(201).end())
       .catch((err) => {
@@ -116,12 +121,36 @@ app.post(
   }
 );
 
-app.get("/api/study-plan/", isLoggedIn, (req, res) => {
+// PUT /api/study-plan/ - Edit a study plan
+app.put(
+  "/api/study-plan/",
+  isLoggedIn,
+  check("list").isJSON(),
+  check("option").isInt({ min: 0, max: 1 }),
+  check("credits").isInt({ min: 20, max: 80 }),
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    study_plan_dao
+      .editStudyPlan(req.body.list, req.body.option, req.body.credits, req.user)
+      .then(() => res.status(200).end())
+      .catch((err) => {
+        console.error(err);
+        res.status(503).json(err).end();
+      });
+  }
+);
+
+// DELETE /api/study-plan/ -Delete the study plan of the current user
+app.delete("/api/study-plan/", isLoggedIn, (req, res) => {
   const user = req.user;
 
   study_plan_dao
-    .getStudyPlan(user)
-    .then((result) => res.status(200).json(result).end())
+    .deleteStudyPlan(user)
+    .then((result) => res.status(204).json(result).end())
     .catch((err) => {
       console.error(err);
       res.status(503).json(err).end();
