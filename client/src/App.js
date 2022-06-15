@@ -28,9 +28,35 @@ function App() {
   const [currentUser, setCurrentUser] = useState({});
   const [mode, setMode] = useState(StudyPlanMode.SHOW);
 
-  const getCoursesList = async () => {
-    const list = await API.getAllCourses();
-    setCoursesList(list);
+  const getCoursesList = () => {
+    API.getAllCourses()
+      .then((list) => {
+        setCoursesList(list);
+      })
+      .catch((err) => {
+        console.error(err);
+        setCoursesList();
+        Toast({
+          message: "Error: " + err,
+          type: "error",
+        });
+      });
+  };
+
+  const getStudyPlan = () => {
+    if (loggedIn) {
+      API.getStudyPlan()
+        .then((study_plan) => {})
+        .catch((err) => {
+          console.error(err);
+          setStudyPlan();
+          setStudyPlanList([]);
+          Toast({
+            message: "Error: " + err,
+            type: "error",
+          });
+        });
+    }
   };
 
   useEffect(() => {
