@@ -1,7 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useState, useEffect } from "react";
-import { StudyPlanMode } from "./StudyPlan";
+import { StudyPlanMode } from "./StudyPlanComponents/StudyPlan";
 import {
   Badge,
   Button,

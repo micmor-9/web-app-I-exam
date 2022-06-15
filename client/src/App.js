@@ -18,14 +18,14 @@ import {
 
 // Import API
 import API from "./API";
-import { StudyPlanMode } from "./components/StudyPlan";
+import { StudyPlanMode } from "./components/StudyPlanComponents/StudyPlan";
 
 function App() {
+  const [currentUser, setCurrentUser] = useState({});
+  const [loggedIn, setLoggedIn] = useState(false);
   const [coursesList, setCoursesList] = useState([]);
   const [studyPlan, setStudyPlan] = useState();
   const [studyPlanList, setStudyPlanList] = useState([]);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState({});
   const [mode, setMode] = useState(StudyPlanMode.SHOW);
 
   const getCoursesList = () => {
@@ -46,7 +46,15 @@ function App() {
   const getStudyPlan = () => {
     if (loggedIn) {
       API.getStudyPlan()
-        .then((study_plan) => {})
+        .then((study_plan) => {
+          if (study_plan !== 404) {
+            setStudyPlan(study_plan);
+            setStudyPlanList(study_plan.courses);
+          } else {
+            setStudyPlan();
+            setStudyPlanList([]);
+          }
+        })
         .catch((err) => {
           console.error(err);
           setStudyPlan();
@@ -78,6 +86,10 @@ function App() {
   useEffect(() => {
     getCoursesList();
   }, []);
+
+  useEffect(() => {
+    getStudyPlan();
+  }, [loggedIn, mode]);
 
   const handleLogin = (credentials) => {
     return new Promise((resolve, reject) => {
@@ -114,7 +126,6 @@ function App() {
     });
   };
 
-  //Mode: 0 ADD, 1 REMOVE
   const beforeAddCourse = (course) => {
     // Check for preparatoryCourse
     if (course.preparatoryCourse.length > 0) {

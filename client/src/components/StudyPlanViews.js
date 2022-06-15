@@ -1,7 +1,7 @@
 import { Container, Row, Col, Button } from "react-bootstrap";
 import CoursesList from "./CoursesList";
 import { LoginForm } from "./AuthComponents";
-import { StudyPlan } from "./StudyPlan";
+import { StudyPlan } from "./StudyPlanComponents/StudyPlan";
 
 function DefaultRoute() {
   return (
@@ -31,6 +31,7 @@ function HomepageRoute(props) {
             <StudyPlan
               mode={props.mode}
               setMode={props.setMode}
+              studyPlan={props.studyPlan}
               studyPlanList={props.studyPlanList}
               setStudyPlanList={props.setStudyPlanList}
               removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}

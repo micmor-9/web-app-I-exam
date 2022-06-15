@@ -40,6 +40,16 @@ const createStudyPlan = async (list, option, credits, student) => {
   } else throw response.json();
 };
 
+const getStudyPlan = async () => {
+  const response = await fetch(SERVER_URL + "/api/study-plan", {
+    method: "GET",
+    credentials: "include",
+  });
+  if (response.ok) {
+    return response.json();
+  } else throw response.json();
+};
+
 /*** AUTHENTICATION APIs ***/
 
 const logIn = async (credentials) => {
@@ -85,5 +95,12 @@ const logOut = async () => {
 
 /******/
 
-const API = { getAllCourses, logIn, getUserInfo, logOut, createStudyPlan };
+const API = {
+  getAllCourses,
+  logIn,
+  getUserInfo,
+  logOut,
+  createStudyPlan,
+  getStudyPlan,
+};
 export default API;

@@ -116,6 +116,18 @@ app.post(
   }
 );
 
+app.get("/api/study-plan/", isLoggedIn, (req, res) => {
+  const user = req.user;
+
+  study_plan_dao
+    .getStudyPlan(user)
+    .then((result) => res.status(200).json(result).end())
+    .catch((err) => {
+      console.error(err);
+      res.status(503).json(err).end();
+    });
+});
+
 /************/
 
 /*** AUTHENTICATION APIs ***/

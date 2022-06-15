@@ -171,6 +171,12 @@
   font-size: 0.9rem;
 }
 
+.study-plan-option-badge, .study-plan-credits-badge {
+  background-color: #edbb5f !important;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
 .course-name {
   margin-bottom: 0;
   font-weight: 500;
