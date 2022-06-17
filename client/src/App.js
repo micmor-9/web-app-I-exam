@@ -52,7 +52,7 @@ function App() {
         console.error(err);
         setCoursesList();
         Toast({
-          message: "Error: " + err,
+          message: "Error: " + err.error,
           type: "error",
         });
       });
@@ -67,7 +67,7 @@ function App() {
           setLoggedIn(true);
         })
         .catch((err) => {
-          console.error(err);
+          console.error(err.error);
           setCurrentUser();
           setLoggedIn(false);
         });
@@ -78,7 +78,7 @@ function App() {
   // Effect to get the updated course list after every update to the study plan
   useEffect(() => {
     getCoursesList();
-  }, [studyPlan]);
+  }, [studyPlan, mode]);
 
   // Effect to get the updated study plan after login and after every mode change (after CREATE od EDIT)
   useEffect(() => {
@@ -96,11 +96,11 @@ function App() {
             }
           })
           .catch((err) => {
-            console.error(err);
+            console.error(err.error);
             setStudyPlan();
             setStudyPlanList([]);
             Toast({
-              message: "Error: " + err,
+              message: "Error: " + err.error,
               type: "error",
             });
           });
@@ -119,7 +119,7 @@ function App() {
           resolve(user);
         })
         .catch((err) => {
-          console.error(err);
+          console.error(err.error);
           reject(err);
         });
     });
@@ -141,6 +141,10 @@ function App() {
           setLoggedIn(false);
           setCurrentUser({});
           setStudyPlan();
+          Toast({
+            message: "Error: " + err.error,
+            type: "error",
+          });
           reject(err);
         });
     });
@@ -329,6 +333,13 @@ function App() {
           .catch((err) => {
             console.error(err);
             reject(err);
+            Toast({
+              message:
+                "There was an error during the creation of the study plan!",
+              type: "error",
+            });
+            setStudyPlanList([]);
+            getCoursesList();
           });
       }
 
@@ -344,6 +355,14 @@ function App() {
           .catch((err) => {
             console.error(err);
             reject(err);
+            Toast({
+              message:
+                "There was an error during the update of the study plan!",
+              type: "error",
+            });
+            setStudyPlanList(studyPlan.courses);
+            getCoursesList();
+            setMode(StudyPlanMode.SHOW);
           });
       }
     });

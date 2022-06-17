@@ -65,54 +65,171 @@ exports.getStudyPlan = (user) => {
 
 // Create a new study plan associated with the current user
 exports.createStudyPlan = (list, option, credits, user) => {
-  const study_plan = new StudyPlan(option, credits, user, JSON.parse(list));
-
+  const parsed_list = JSON.parse(list).map((c) => c.code);
   return new Promise((resolve, reject) => {
-    if (study_plan.checkConsistency()) {
-      // Update first the option field of the student
-      const sql = "UPDATE student SET option = ? WHERE id = ?";
-      db.run(sql, [option, user.id], function (err) {
-        if (err) {
-          console.error(err);
-          reject(err);
-        } else {
-          // Then create an array of promises to insert every single course into the study_plan_courses table
-          const promises = study_plan.courses.map((course) => {
-            return new Promise((resolve, reject) => {
-              const sql =
-                "INSERT INTO study_plan_courses(userId, courseCode) VALUES (?, ?)";
-              db.run(sql, [user.id, course.code], (err) => {
-                if (err) {
-                  console.error(err);
-                  reject(err);
-                } else {
-                  resolve();
-                }
-              });
-            });
-          });
-          // Consume all the promises in parallel
-          Promise.all(promises)
-            .then(() => {
-              const promises = study_plan.courses.map((course) => {
-                // Then again create an array of promises to update the enrolledStudents info of all the courses included in the new study plan.
-                return new Promise((resolve, reject) => {
-                  const sql =
-                    "UPDATE course SET enrolledStudents = enrolledStudents + 1 WHERE code = ?";
-                  db.run(sql, [course.code], (err) => {
-                    if (err) {
-                      console.error(err);
-                      reject(err);
-                    } else {
-                      resolve();
-                    }
-                  });
+    // Retrieve the most update version of the selected courses from the database
+    course_dao.listCourses().then((courses) => {
+      const study_plan_list = courses.filter((c) =>
+        parsed_list.includes(c.code)
+      );
+      const study_plan = new StudyPlan(option, credits, user, study_plan_list);
+      if (study_plan.checkConsistency()) {
+        // Update first the option field of the student
+        const sql = "UPDATE student SET option = ? WHERE id = ?";
+        db.run(sql, [option, user.id], function (err) {
+          if (err) {
+            console.error(err);
+            reject(err);
+          } else {
+            // Then create an array of promises to insert every single course into the study_plan_courses table
+            const promises = study_plan.courses.map((course) => {
+              return new Promise((resolve, reject) => {
+                const sql =
+                  "INSERT INTO study_plan_courses(userId, courseCode) VALUES (?, ?)";
+                db.run(sql, [user.id, course.code], (err) => {
+                  if (err) {
+                    console.error(err);
+                    reject(err);
+                  } else {
+                    resolve();
+                  }
                 });
               });
-              // Consume the promises and resolve
-              Promise.all(promises)
+            });
+            // Consume all the promises in parallel
+            Promise.all(promises)
+              .then(() => {
+                const promises = study_plan.courses.map((course) => {
+                  // Then again create an array of promises to update the enrolledStudents info of all the courses included in the new study plan.
+                  return new Promise((resolve, reject) => {
+                    const sql =
+                      "UPDATE course SET enrolledStudents = enrolledStudents + 1 WHERE code = ?";
+                    db.run(sql, [course.code], (err) => {
+                      if (err) {
+                        console.error(err);
+                        reject(err);
+                      } else {
+                        resolve();
+                      }
+                    });
+                  });
+                });
+                // Consume the promises and resolve
+                Promise.all(promises)
+                  .then(() => {
+                    resolve(201);
+                  })
+                  .catch((err) => reject(err));
+              })
+              .catch((err) => {
+                console.error(err);
+                reject(err);
+              });
+          }
+        });
+        resolve();
+      } else {
+        reject(422);
+      }
+    });
+  });
+};
+
+// Edit the study plan associated with the current user
+exports.editStudyPlan = (list, option, credits, user) => {
+  const parsed_list = JSON.parse(list).map((c) => c.code);
+  // Retrieve the most update version of the selected courses from the database
+  return new Promise((resolve, reject) => {
+    course_dao.listCourses().then((courses) => {
+      const study_plan_list = courses.filter((c) =>
+        parsed_list.includes(c.code)
+      );
+      // Create the object of the updated study plan
+      const updated_study_plan = new StudyPlan(
+        option,
+        credits,
+        user,
+        study_plan_list
+      );
+      // Get the current study plan
+      this.getStudyPlan(user).then((current_study_plan) => {
+        // If it doesn't exist, reject 404
+        if (current_study_plan === 404) {
+          reject(404);
+        }
+        // Check if the new study plan is consistent with all the constraints
+        if (updated_study_plan.checkConsistency()) {
+          // Get the courses to remove from the study plan and create an array of promises
+          const to_remove = current_study_plan.courses
+            .filter(
+              (course) =>
+                !updated_study_plan.courses
+                  .map((c) => c.code)
+                  .includes(course.code)
+            )
+            .map((course) => {
+              return new Promise((resolve, reject) => {
+                const sql =
+                  "UPDATE course SET enrolledStudents = enrolledStudents - 1 WHERE code = ?";
+                db.run(sql, [course.code], (err) => {
+                  if (err) {
+                    console.error(err);
+                    reject(err);
+                  } else {
+                    const sql =
+                      "DELETE FROM study_plan_courses WHERE userId = ? AND courseCode = ?";
+                    db.run(sql, [user.id, course.code], (err) => {
+                      if (err) {
+                        console.error(err);
+                        reject(err);
+                      } else {
+                        resolve();
+                      }
+                    });
+                  }
+                });
+              });
+            });
+
+          // Get the courses to add to the study plan and create an array of promises
+          const to_add = updated_study_plan.courses
+            .filter(
+              (course) =>
+                !current_study_plan.courses
+                  .map((c) => c.code)
+                  .includes(course.code)
+            )
+            .map((course) => {
+              return new Promise((resolve, reject) => {
+                const sql =
+                  "UPDATE course SET enrolledStudents = enrolledStudents + 1 WHERE code = ?";
+                db.run(sql, [course.code], (err) => {
+                  if (err) {
+                    console.error(err);
+                    reject(err);
+                  } else {
+                    const sql =
+                      "INSERT INTO study_plan_courses(userId, courseCode) VALUES (?, ?)";
+                    db.run(sql, [user.id, course.code], (err) => {
+                      if (err) {
+                        console.error(err);
+                        reject(err);
+                      } else {
+                        resolve();
+                      }
+                    });
+                  }
+                });
+              });
+            });
+
+          // Consume the promises in the to_remove array
+          Promise.all(to_remove)
+            .then(() => {
+              // Consume the promises in the to_add array
+              Promise.all(to_add)
                 .then(() => {
-                  resolve(201);
+                  resolve(200);
                 })
                 .catch((err) => reject(err));
             })
@@ -120,116 +237,11 @@ exports.createStudyPlan = (list, option, credits, user) => {
               console.error(err);
               reject(err);
             });
+          resolve();
+        } else {
+          reject(422);
         }
       });
-      resolve();
-    } else {
-      reject(422);
-    }
-  });
-};
-
-// Edit the study plan associated with the current user
-exports.editStudyPlan = (list, option, credits, user) => {
-  // Create the object of the updated study plan
-  const updated_study_plan = new StudyPlan(
-    option,
-    credits,
-    user,
-    JSON.parse(list)
-  );
-
-  return new Promise((resolve, reject) => {
-    // Get the current study plan
-    this.getStudyPlan(user).then((current_study_plan) => {
-      // If it doesn't exist, reject 404
-      if (current_study_plan === 404) {
-        reject(404);
-      }
-      // Check if the new study plan is consistent with all the constraints
-      if (updated_study_plan.checkConsistency()) {
-        // Get the courses to remove from the study plan and create an array of promises
-        const to_remove = current_study_plan.courses
-          .filter(
-            (course) =>
-              !updated_study_plan.courses
-                .map((c) => c.code)
-                .includes(course.code)
-          )
-          .map((course) => {
-            return new Promise((resolve, reject) => {
-              const sql =
-                "UPDATE course SET enrolledStudents = enrolledStudents - 1 WHERE code = ?";
-              db.run(sql, [course.code], (err) => {
-                if (err) {
-                  console.error(err);
-                  reject(err);
-                } else {
-                  const sql =
-                    "DELETE FROM study_plan_courses WHERE userId = ? AND courseCode = ?";
-                  db.run(sql, [user.id, course.code], (err) => {
-                    if (err) {
-                      console.error(err);
-                      reject(err);
-                    } else {
-                      resolve();
-                    }
-                  });
-                }
-              });
-            });
-          });
-
-        // Get the courses to add to the study plan and create an array of promises
-        const to_add = updated_study_plan.courses
-          .filter(
-            (course) =>
-              !current_study_plan.courses
-                .map((c) => c.code)
-                .includes(course.code)
-          )
-          .map((course) => {
-            return new Promise((resolve, reject) => {
-              const sql =
-                "UPDATE course SET enrolledStudents = enrolledStudents + 1 WHERE code = ?";
-              db.run(sql, [course.code], (err) => {
-                if (err) {
-                  console.error(err);
-                  reject(err);
-                } else {
-                  const sql =
-                    "INSERT INTO study_plan_courses(userId, courseCode) VALUES (?, ?)";
-                  db.run(sql, [user.id, course.code], (err) => {
-                    if (err) {
-                      console.error(err);
-                      reject(err);
-                    } else {
-                      resolve();
-                    }
-                  });
-                }
-              });
-            });
-          });
-        
-        // Consume the promises in the to_remove array
-        Promise.all(to_remove)
-          .then(() => {
-            // Consume the promises in the to_add array
-            Promise.all(to_add)
-              .then(() => {
-                resolve(200);
-              })
-              .catch((err) => reject(err));
-          })
-          .catch((err) => {
-            console.error(err);
-            reject(err);
-          });
-        resolve();
-      } else {
-        reject(422);
-      }
     });
   });
 };

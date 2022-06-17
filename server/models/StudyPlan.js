@@ -27,23 +27,24 @@ class StudyPlan {
    * @returns {boolean}
    */
   checkConsistency() {
+    let result = true;
     if (this.courses.length > 0) {
       // Check credits consistency with option
       const totalCredits = this.courses
         .map((course) => course.credits)
         .reduce((prev, curr) => prev + curr, 0);
 
-      if (totalCredits != this.credits) return false;
+      if (totalCredits != this.credits) result = false;
 
       if (
         this.credits < StudyPlan.CreditsConstraints[this.option].min ||
         this.credits > StudyPlan.CreditsConstraints[this.option].max
       )
-        return false;
+        result = false;
 
       // Check number of students enrolled consistency
       this.courses.forEach((course) => {
-        if (course.enrolledStudents === course.maxStudents) return false;
+        if (course.enrolledStudents === course.maxStudents) result = false;
       });
 
       // Check preparatory and incompatible consistency
@@ -54,7 +55,7 @@ class StudyPlan {
             (c) => c.code === course.preparatoryCourse[0].code
           );
           if (prepIndex === undefined) {
-            return false;
+            result = false;
           }
         }
 
@@ -64,12 +65,14 @@ class StudyPlan {
             (c) => c.code === incompatibleCourse.code
           );
           if (incompIndex !== undefined) {
-            return false;
+            result = false;
           }
         });
       });
 
-      return true;
+      return result;
+    } else {
+      return false;
     }
   }
 }

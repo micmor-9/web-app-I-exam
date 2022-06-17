@@ -117,7 +117,11 @@ app.post(
       .then(() => res.status(201).end())
       .catch((err) => {
         console.error(err);
-        res.status(503).json(err).end();
+        if (err === 422) {
+          res.status(422).json(err).end();
+        } else {
+          res.status(503).json(err).end();
+        }
       });
   }
 );
