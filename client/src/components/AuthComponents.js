@@ -24,7 +24,7 @@ function LoginForm(props) {
         })
         .catch((error) => {
           console.error(error);
-          if (error.status == 401) {
+          if (error.status === 401) {
             Toast({ message: `Wrong email or password`, type: "error" });
           } else {
             Toast({ message: `Server unavailable`, type: "error" });

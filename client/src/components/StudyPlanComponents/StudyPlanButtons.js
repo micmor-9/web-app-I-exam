@@ -18,10 +18,10 @@ function StudyPlanButtons({
 }) {
   return (
     <Col className="study-plan-btn-col" xs={12} md={6}>
-      {studyPlanList.length === 0 && mode == StudyPlanMode.SHOW && (
+      {studyPlanList.length === 0 && mode === StudyPlanMode.SHOW && (
         <CreateStudyPlanBtn setMode={setMode} />
       )}
-      {studyPlanList.length > 0 && mode == StudyPlanMode.SHOW && (
+      {studyPlanList.length > 0 && mode === StudyPlanMode.SHOW && (
         <>
           <DeleteStudyPlanBtn
             deleteStudyPlan={deleteStudyPlan}
@@ -31,7 +31,7 @@ function StudyPlanButtons({
           <EditStudyPlanBtn setMode={setMode} />
         </>
       )}
-      {mode != StudyPlanMode.SHOW && (
+      {mode !== StudyPlanMode.SHOW && (
         <>
           <CancelStudyPlanBtn
             setMode={setMode}

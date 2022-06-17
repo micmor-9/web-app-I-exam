@@ -1,4 +1,4 @@
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import CoursesList from "./CoursesList";
 import { LoginForm } from "./AuthComponents";
 import { StudyPlan } from "./StudyPlanComponents/StudyPlan";

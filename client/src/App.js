@@ -58,31 +58,6 @@ function App() {
       });
   };
 
-  // Get study plan of the current user
-  const getStudyPlan = () => {
-    if (loggedIn) {
-      API.getStudyPlan()
-        .then((study_plan) => {
-          if (study_plan !== 404) {
-            setStudyPlan(study_plan);
-            setStudyPlanList(study_plan.courses);
-          } else {
-            setStudyPlan();
-            setStudyPlanList([]);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          setStudyPlan();
-          setStudyPlanList([]);
-          Toast({
-            message: "Error: " + err,
-            type: "error",
-          });
-        });
-    }
-  };
-
   // Effect to check if the user has already authenticated
   useEffect(() => {
     const verifyAuthentication = () => {
@@ -107,6 +82,30 @@ function App() {
 
   // Effect to get the updated study plan after login and after every mode change (after CREATE od EDIT)
   useEffect(() => {
+    // Get study plan of the current user
+    const getStudyPlan = () => {
+      if (loggedIn) {
+        API.getStudyPlan()
+          .then((study_plan) => {
+            if (study_plan !== 404) {
+              setStudyPlan(study_plan);
+              setStudyPlanList(study_plan.courses);
+            } else {
+              setStudyPlan();
+              setStudyPlanList([]);
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            setStudyPlan();
+            setStudyPlanList([]);
+            Toast({
+              message: "Error: " + err,
+              type: "error",
+            });
+          });
+      }
+    };
     getStudyPlan();
   }, [loggedIn, mode]);
 

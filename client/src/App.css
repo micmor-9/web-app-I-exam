@@ -215,10 +215,6 @@
   color: #b57c12;
 }
 
-#studyPlanPanel .col-12 {
-  overflow-x: scroll;
-}
-
 .study-plan-list {
   border: 5px dashed #dbdbdb;
   border-radius: 10px;

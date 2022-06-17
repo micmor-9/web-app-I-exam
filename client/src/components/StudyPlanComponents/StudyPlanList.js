@@ -34,7 +34,7 @@ function StudyPlanTable({ data, removeCourseFromStudyPlan = null }) {
           </tr>
         </thead>
         <tbody>
-          {data.length == 0 ? (
+          {data.length === 0 ? (
             <tr>
               <td colSpan={removeCourseFromStudyPlan ? 8 : 7}>
                 {" "}

@@ -1,5 +1,3 @@
-"use strict";
-
 class Course {
   /**
    * Creates a new instance of Course

@@ -74,7 +74,7 @@ function CoursesListPagination({
   const paginationItems = [];
   // Calculate the number of pages needed to display all the list items
   const pages =
-    list.length % elementsPerPage != 0
+    list.length % elementsPerPage !== 0
       ? list.length / elementsPerPage + 1
       : list.length / elementsPerPage;
 
@@ -141,46 +141,56 @@ function CoursesListItem({
     setExpanded((expanded) => !expanded);
   };
 
-  // Function that checks if the current item can be added to the study plan
-  const checkCoursesConstraints = () => {
-    let message = [];
+  // Effect to update the warnings of the list items whenever the stidu plan list is updated
+  useEffect(() => {
+    // Function that checks if the current item can be added to the study plan
+    const checkCoursesConstraints = () => {
+      let message = [];
 
-    // Check for preparatoryCourse
-    if (course.preparatoryCourse.length > 0) {
-      const prepIndex = studyPlanList.find(
-        (c) => c.code === course.preparatoryCourse[0].code
-      );
-      if (prepIndex === undefined) {
-        const pc = coursesList.find(
-          (pc) => pc.code === course.preparatoryCourse[0].code
+      // Check for preparatoryCourse
+      if (course.preparatoryCourse.length > 0) {
+        const prepIndex = studyPlanList.find(
+          (c) => c.code === course.preparatoryCourse[0].code
         );
-        message.push(`
-          Can't add ${course.code} - ${course.name} to the Study Plan. You need its preparatory course ${pc.code} - ${pc.name}
-        `);
-      }
-    }
-
-    // Check for incompatibleCourses
-    if (course.incompatibleCourses.length > 0) {
-      course.incompatibleCourses.forEach((incompatibleCourse, index) => {
-        const incompIndex = studyPlanList.find(
-          (c) => c.code === incompatibleCourse.code
-        );
-        if (incompIndex !== undefined) {
-          const ic = coursesList.find(
-            (ic) => ic.code === course.incompatibleCourses[index].code
+        if (prepIndex === undefined) {
+          const pc = coursesList.find(
+            (pc) => pc.code === course.preparatoryCourse[0].code
           );
           message.push(`
+          Can't add ${course.code} - ${course.name} to the Study Plan. You need its preparatory course ${pc.code} - ${pc.name}
+        `);
+        }
+      }
+
+      // Check for incompatibleCourses
+      if (course.incompatibleCourses.length > 0) {
+        course.incompatibleCourses.forEach((incompatibleCourse, index) => {
+          const incompIndex = studyPlanList.find(
+            (c) => c.code === incompatibleCourse.code
+          );
+          if (incompIndex !== undefined) {
+            const ic = coursesList.find(
+              (ic) => ic.code === course.incompatibleCourses[index].code
+            );
+            message.push(`
             Can't add ${course.code} - ${course.name} to the Study Plan. It is incompatible with ${ic.code} - ${ic.name}
           `);
-        }
-      });
-    }
+          }
+        });
+      }
 
-    // Check for maximum number of enrolledStudents
-    if (course.maxStudents) {
-      if (studyPlan) {
-        if (!studyPlan.courses.find((c) => c.code === course.code)) {
+      // Check for maximum number of enrolledStudents
+      if (course.maxStudents) {
+        if (studyPlan) {
+          if (!studyPlan.courses.find((c) => c.code === course.code)) {
+            if (course.enrolledStudents === course.maxStudents) {
+              message.push(`
+          ${course.code} - ${course.name}
+          has already reached the maximum number of students enrolled.
+        `);
+            }
+          }
+        } else {
           if (course.enrolledStudents === course.maxStudents) {
             message.push(`
           ${course.code} - ${course.name}
@@ -188,27 +198,16 @@ function CoursesListItem({
         `);
           }
         }
-      } else {
-        if (course.enrolledStudents === course.maxStudents) {
-          message.push(`
-          ${course.code} - ${course.name}
-          has already reached the maximum number of students enrolled.
-        `);
-        }
       }
-    }
 
-    if (message.length !== 0) {
-      setWarning(message.join("; "));
-    } else {
-      setWarning();
-    }
-  };
-
-  // Effect to update the warnings of the list items whenever the stidu plan list is updated
-  useEffect(() => {
+      if (message.length !== 0) {
+        setWarning(message.join("; "));
+      } else {
+        setWarning();
+      }
+    };
     checkCoursesConstraints();
-  }, [studyPlanList]);
+  }, [studyPlanList, course, coursesList, studyPlan]);
 
   const columnsWidth = {
     code: { xs: 12, sm: 6, md: 2, lg: 1, xl: 1 },
@@ -225,7 +224,8 @@ function CoursesListItem({
     <Card
       key={index}
       className={
-        (mode == StudyPlanMode.CREATE || mode == StudyPlanMode.EDIT) && warning
+        (mode === StudyPlanMode.CREATE || mode === StudyPlanMode.EDIT) &&
+        warning
           ? "courses-list-item course-warning"
           : "courses-list-item"
       }
@@ -297,7 +297,7 @@ function CourseName({ cols, name, index, warning, mode }) {
     >
       <Card.Title className="mb-1">
         {name}
-        {(mode == StudyPlanMode.CREATE || mode == StudyPlanMode.EDIT) &&
+        {(mode === StudyPlanMode.CREATE || mode === StudyPlanMode.EDIT) &&
           warning && (
             <OverlayTrigger
               key={`course-warning-${index}`}
@@ -415,8 +415,8 @@ function CourseActions({
       xl={cols.xl}
       className="text-center"
     >
-      {(mode == StudyPlanMode.CREATE || mode == StudyPlanMode.EDIT) &&
-        (studyPlanList.filter((c) => c.code === course.code).length != 0 ? (
+      {(mode === StudyPlanMode.CREATE || mode === StudyPlanMode.EDIT) &&
+        (studyPlanList.filter((c) => c.code === course.code).length !== 0 ? (
           <Button
             variant={"danger"}
             size="sm"

@@ -21,6 +21,12 @@ const StudyPlanMode = {
   PRECREATE: 3, // Create a new study plan (before defining the option)
 };
 
+// Study Plan Options
+const StudyPlanOptions = {
+  PART_TIME: 0, // Part Time Study Plan Option
+  FULL_TIME: 1, // Full Time Study Plan Option
+}
+
 const CreditsConstraints = {
   0: { min: 20, max: 40 }, // Credits contstraints for a part time study plan
   1: { min: 60, max: 80 }, // Credits contstraints for a full time study plan
@@ -72,18 +78,18 @@ function StudyPlan({
         type: "error",
       });
     }
-  }, [studyPlanCredits]);
+  }, [studyPlanCredits, studyPlanOption]);
 
   return (
     <Container>
       <Row className="study-plan-head justify-content-between align-items-center">
         <Col className="study-plan-header-col align-middle">
           <h3 className="study-plan-header d-flex align-items-center">
-            {mode == StudyPlanMode.SHOW && "Your Study Plan"}
-            {(mode == StudyPlanMode.CREATE ||
-              mode == StudyPlanMode.PRECREATE) &&
+            {mode === StudyPlanMode.SHOW && "Your Study Plan"}
+            {(mode === StudyPlanMode.CREATE ||
+              mode === StudyPlanMode.PRECREATE) &&
               "Create Study Plan"}
-            {mode == StudyPlanMode.EDIT && "Edit Study Plan"}
+            {mode === StudyPlanMode.EDIT && "Edit Study Plan"}
             {studyPlan !== undefined && (
               <StudyPlanInfo mode={mode} studyPlan={studyPlan} />
             )}
@@ -103,12 +109,12 @@ function StudyPlan({
         />
       </Row>
       <Row>
-        {mode == StudyPlanMode.SHOW && (
+        {mode === StudyPlanMode.SHOW && (
           <StudyPlanList studyPlanList={studyPlanList} />
         )}
-        {(mode == StudyPlanMode.CREATE ||
-          mode == StudyPlanMode.PRECREATE ||
-          mode == StudyPlanMode.EDIT) && (
+        {(mode === StudyPlanMode.CREATE ||
+          mode === StudyPlanMode.PRECREATE ||
+          mode === StudyPlanMode.EDIT) && (
           <StudyPlanForm
             studyPlan={studyPlan}
             studyPlanList={studyPlanList}
@@ -132,7 +138,9 @@ function StudyPlanInfo({ mode, studyPlan }) {
     <>
       {mode !== StudyPlanMode.PRECREATE && mode !== StudyPlanMode.CREATE && (
         <Badge pill bg="light" className="study-plan-option-badge mx-3">
-          {studyPlan.option === 0 ? "PART TIME" : "FULL TIME"}
+          {studyPlan.option === StudyPlanOptions.PART_TIME
+            ? "PART TIME"
+            : "FULL TIME"}
         </Badge>
       )}
       {mode === StudyPlanMode.SHOW && (
@@ -165,11 +173,11 @@ function StudyPlanForm({
       .map((course) => course.credits)
       .reduce((prev, curr) => prev + curr, 0);
     setStudyPlanCredits(totalCredits);
-  }, [studyPlanList]);
+  }, [studyPlanList, setStudyPlanCredits]);
 
   return (
     <Card id="create-study-plan-form">
-      {mode != StudyPlanMode.EDIT && (
+      {mode !== StudyPlanMode.EDIT && (
         <Row>
           <Col xs={12}>
             <ButtonGroup className="mb-3">
@@ -177,13 +185,17 @@ function StudyPlanForm({
                 key={"part-time-option"}
                 id={"part-time-option"}
                 type="radio"
-                variant={studyPlanOption === 0 ? "study" : "outline-study"}
+                variant={
+                  studyPlanOption === StudyPlanOptions.PART_TIME
+                    ? "study"
+                    : "outline-study"
+                }
                 name="study-plan-option"
-                value={0}
-                checked={studyPlanOption === 0}
+                value={StudyPlanOptions.PART_TIME}
+                checked={studyPlanOption === StudyPlanOptions.PART_TIME}
                 onClick={() => {
                   setMode(StudyPlanMode.CREATE);
-                  setStudyPlanOption(0);
+                  setStudyPlanOption(StudyPlanOptions.PART_TIME);
                 }}
               >
                 Part Time
@@ -192,13 +204,17 @@ function StudyPlanForm({
                 key={"full-time-option"}
                 id={"full-time-option"}
                 type="radio"
-                variant={studyPlanOption === 1 ? "study" : "outline-study"}
+                variant={
+                  studyPlanOption === StudyPlanOptions.FULL_TIME
+                    ? "study"
+                    : "outline-study"
+                }
                 name="study-plan-option"
-                value={1}
-                checked={studyPlanOption === 1}
+                value={StudyPlanOptions.FULL_TIME}
+                checked={studyPlanOption === StudyPlanOptions.FULL_TIME}
                 onClick={() => {
                   setMode(StudyPlanMode.CREATE);
-                  setStudyPlanOption(1);
+                  setStudyPlanOption(StudyPlanOptions.FULL_TIME);
                 }}
               >
                 Full Time
@@ -211,9 +227,13 @@ function StudyPlanForm({
         <>
           <Row>
             <Col className="mb-3">
-              A {studyPlanOption == 0 ? "Part Time" : "Full Time"} study plan
-              needs to have minimum {CreditsConstraints[studyPlanOption].min}{" "}
-              and maximum {CreditsConstraints[studyPlanOption].max} credits.
+              A{" "}
+              {studyPlanOption === StudyPlanOptions.PART_TIME
+                ? "Part Time"
+                : "Full Time"}{" "}
+              study plan needs to have minimum{" "}
+              {CreditsConstraints[studyPlanOption].min} and maximum{" "}
+              {CreditsConstraints[studyPlanOption].max} credits.
             </Col>
           </Row>
           <Row id="study-plan-progress">
@@ -221,7 +241,7 @@ function StudyPlanForm({
               <Col>
                 <h4 className="text-muted text-start">0</h4>
               </Col>
-              {studyPlanOption == 1 && (
+              {studyPlanOption === StudyPlanOptions.FULL_TIME && (
                 <>
                   <Col></Col>
                   <Col></Col>
