@@ -1,14 +1,14 @@
-# Exam #1: "StudyPlan"
+# Exam #1: StudyPlan
 ## Student: s299770 MORGIGNO MICHELE 
 
 ## React Client Application Routes
 
-- Route `/`: Contains <HomepageRoute> with just the <CoursesList> if the user isn't logged in, otherwise it also shows the <StudyPlan> component from which you can view, create and edit the study plan.
-- Route `/login`: Contains <LoginRoute> component if the user isn't already logged in, otherwise redirects to `/`. 
+- Route `/`: Contains `HomepageRoute` with just the `CoursesList` if the user isn't logged in, otherwise it also shows the `StudyPlan` component from which you can view, create and edit the study plan.
+- Route `/login`: Contains `LoginRoute` component if the user isn't already logged in, otherwise redirects to `/`. 
 
 ## API Server
 
-- GET `/api/courses` - Get the list of all the courses
+- __GET__ `/api/courses/` - Get the list of all the courses
   - Response Status: `200` OK, `500` Internal Server Error
   - Response body: 
     ```
@@ -44,7 +44,7 @@
       ...
     ```
   
-- GET `/api/study-plan` - Get the study plan of the current user
+- __GET__ `/api/study-plan/` - Get the study plan of the current user
   - Prerequisite: User is logged in
   - Request Body: __None__
   - Response Status: `200` OK, `401` Unauthorized, `500` Internal Server Error
@@ -85,7 +85,7 @@
     ]
     } 
     ```
-- POST `/api/study-plan/` - Create a new study plan
+- __POST__ `/api/study-plan/` - Create a new study plan
   - Prerequisite: User is logged in
   - Request body: 
     ```
@@ -98,7 +98,7 @@
   - Response Status: `201` Created, `401` Unauthorized, `422` Unprocessable entity (Bad body format), `503` Service Unavailable
   - Response Body: __None__
 
-- PUT `/api/study-plan/` - Edit a study plan
+- __PUT__ `/api/study-plan/` - Edit a study plan
   - Prerequisite: User is logged in
   - Request body: 
     ```
@@ -111,47 +111,47 @@
   - Response Status: `200` OK, `401` Unauthorized, `422` Unprocessable Entity, `503` Service Unavailable
   - Response Body: __None__
 
-- DELETE `/api/study-plan/` - Delete the study plan of the current user
+- __DELETE__ `/api/study-plan/` - Delete the study plan of the current user
   - Prerequisite: User is logged in
   - Request Body: __None__
   - Response Status: `204` No Content, `401` Unauthorized, `503` Service Unavailable
 
-- POST `/api/sessions` - Create a new session with the logged in user
+- __POST__ `/api/sessions` - Create a new session with the logged in user
   - Request Body:
-  ```
-  {
-    username: 'mario.rossi@studenti.polito.it',
-    password: password
-  }
-  ```
+    ```
+    {
+      username: 'mario.rossi@studenti.polito.it',
+      password: password
+    }
+    ```
   - Response Status: `201` OK, `401` Unauthorized
   - Response Body: 
-  ```
-  {
-    id: number - User ID
-    email: string - User email
-    name: string - User name
-    surname: string - User surname
-    option: number - Option of user's study plan
-  }
-  ```
+    ```
+    {
+      id: number - User ID
+      email: string - User email
+      name: string - User name
+      surname: string - User surname
+      option: number - Option of user's study plan
+    }
+    ```
 
-- GET `/api/sessions/current` - Get the info about the current user
+- __GET__ `/api/sessions/current` - Get the info about the current user
   - Prerequisite: User is logged in
   - Request Body: __None__
   - Response Status: `200` OK, `401` Unauthorized
   - Response Body: 
-  ```
-  {
-    id: number - User ID
-    email: string - User email
-    name: string - User name
-    surname: string - User surname
-    option: number - Option of user's study plan
-  }
-  ```
+    ```
+    {
+      id: number - User ID
+      email: string - User email
+      name: string - User name
+      surname: string - User surname
+      option: number - Option of user's study plan
+    }
+    ```
 
-- DELETE `/api/session/current` - Delete the current session and logout the user
+- __DELETE__ `/api/session/current` - Delete the current session and logout the user
   - Prerequisite: User is logged in
   - Request Body: __None__
   - Response Status: `204` No Content, `401` Unauthorized
@@ -170,13 +170,13 @@
   
 
 - Table `incompatible_courses` - contains the incompatible courses of a certain course  
-  __Columns__: 
+  *__Columns__:*
     - `courseCode`: text - Course Code (PK)
     - `incompatibleWith`: text - Course Code of the incompatible Course (PK)  
   
 
 - Table `student` - contains the students (users)  
-  __Columns__: 
+  *__Columns__:*
     - `id`: integer - Student ID
     - `email`: text - Student email
     - `name`: text - Student name
@@ -187,7 +187,7 @@
   
 
 - Table `study_plan_courses` - contains the courses belonging to study plans  
-  __Columns__:
+  *__Columns__:*
     - `userId`: integer - Student ID (PK)
     - `courseCode`: text - Course Code (PK)
 
@@ -219,4 +219,4 @@
 - test@test.it, password
 - dev@studenti.polito.it, password
 - mario.rossi@polito.it, password
-- michele.morgigno@studenti.polito.it, password
+- michele.morgigno@studenti.polito.it, student
