@@ -179,7 +179,16 @@ function CoursesListItem({
 
     // Check for maximum number of enrolledStudents
     if (course.maxStudents) {
-      if (studyPlan && !studyPlan.courses.find((c) => c.code === course.code)) {
+      if (studyPlan) {
+        if (!studyPlan.courses.find((c) => c.code === course.code)) {
+          if (course.enrolledStudents === course.maxStudents) {
+            message.push(`
+          ${course.code} - ${course.name}
+          has already reached the maximum number of students enrolled.
+        `);
+          }
+        }
+      } else {
         if (course.enrolledStudents === course.maxStudents) {
           message.push(`
           ${course.code} - ${course.name}

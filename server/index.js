@@ -77,7 +77,7 @@ app.use(passport.authenticate("session"));
 app.get("/api/courses", (req, res) => {
   course_dao
     .listCourses()
-    .then((courses) => res.json(courses))
+    .then((courses) => res.status(200).json(courses))
     .catch((err) => res.status(500).json(err));
 });
 
@@ -90,7 +90,7 @@ app.get("/api/study-plan/", isLoggedIn, (req, res) => {
     .then((result) => res.status(200).json(result).end())
     .catch((err) => {
       console.error(err);
-      res.status(503).json(err).end();
+      res.status(500).json(err).end();
     });
 });
 
@@ -182,15 +182,13 @@ app.post("/api/sessions", function (req, res, next) {
 
 // GET /api/sessions/current - Get the info about the current user
 app.get("/api/sessions/current", isLoggedIn, (req, res) => {
-  if (req.isAuthenticated()) {
-    res.status(200).json(req.user);
-  } else res.status(401).json({ error: "Not authenticated" });
+  res.status(200).json(req.user);
 });
 
 // DELETE /api/session/current - Delete the current session and logout the user
 app.delete("/api/sessions/current", isLoggedIn, (req, res) => {
   req.logout(() => {
-    res.end();
+    res.status(204).end();
   });
 });
 

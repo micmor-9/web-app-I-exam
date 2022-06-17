@@ -22,12 +22,22 @@ import {
 import API from "./API";
 
 function App() {
-  // Create States
+  // currentUser: {Object} -> keeps information about current user
   const [currentUser, setCurrentUser] = useState({});
+
+  // loggedIn: {bool} -> user is logged in or not
   const [loggedIn, setLoggedIn] = useState(false);
+
+  // coursesList: {Course[]} -> list of all the courses available
   const [coursesList, setCoursesList] = useState([]);
+
+  // studyPlan: {StudyPlan} -> study plan object retrieved from the database
   const [studyPlan, setStudyPlan] = useState();
+
+  // studyPlanList: {Course[]} -> list of the courses beloging to the "local" study plan (which hasn't been saved permanently yet)
   const [studyPlanList, setStudyPlanList] = useState([]);
+
+  // mode: {number} -> current mode of the application. Valid values are defined in the StudyPlan component
   const [mode, setMode] = useState(StudyPlanMode.SHOW);
 
   /*** API Calls ***/
@@ -166,7 +176,7 @@ function App() {
             </>
           ),
           type: "warning",
-          duration: 8000,
+          duration: 5000,
         });
         prepResult = false;
       }
@@ -197,7 +207,7 @@ function App() {
               </>
             ),
             type: "warning",
-            duration: 8000,
+            duration: 5000,
           });
           incompResult = false;
         }
@@ -206,23 +216,38 @@ function App() {
 
     // Check for maximum number of enrolledStudents
     if (course.maxStudents) {
-      if (
-        course.enrolledStudents === course.maxStudents &&
-        !studyPlan.courses.find((c) => c.code === course.code)
-      ) {
-        Toast({
-          message: (
-            <>
-              <b>
-                {course.code} - {course.name}
-              </b>{" "}
-              has already reached the maximum number of students enrolled.
-            </>
-          ),
-          type: "warning",
-          duration: 5000,
-        });
-        enrollResult = false;
+      if (course.enrolledStudents === course.maxStudents) {
+        if (studyPlan) {
+          if (!studyPlan.courses.find((c) => c.code === course.code)) {
+            Toast({
+              message: (
+                <>
+                  <b>
+                    {course.code} - {course.name}
+                  </b>{" "}
+                  has already reached the maximum number of students enrolled.
+                </>
+              ),
+              type: "warning",
+              duration: 5000,
+            });
+            enrollResult = false;
+          }
+        } else {
+          Toast({
+            message: (
+              <>
+                <b>
+                  {course.code} - {course.name}
+                </b>{" "}
+                has already reached the maximum number of students enrolled.
+              </>
+            ),
+            type: "warning",
+            duration: 5000,
+          });
+          enrollResult = false;
+        }
       }
     }
 
