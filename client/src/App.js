@@ -139,6 +139,10 @@ function App() {
 
   // Handler called when adding a course to the study plan to check the constraints
   const beforeAddCourse = (course) => {
+    let prepResult = true;
+    let incompResult = true;
+    let enrollResult = true;
+
     // Check for preparatoryCourse
     if (course.preparatoryCourse.length > 0) {
       const prepIndex = studyPlanList.find(
@@ -164,14 +168,13 @@ function App() {
           type: "warning",
           duration: 8000,
         });
-        return false;
+        prepResult = false;
       }
-      return true;
     }
 
     // Check for incompatibleCourses
     if (course.incompatibleCourses.length > 0) {
-      let result = true;
+      incompResult = true;
       course.incompatibleCourses.forEach((incompatibleCourse, index) => {
         const incompIndex = studyPlanList.find(
           (c) => c.code === incompatibleCourse.code
@@ -196,15 +199,17 @@ function App() {
             type: "warning",
             duration: 8000,
           });
-          result = false;
+          incompResult = false;
         }
       });
-      return result;
     }
 
     // Check for maximum number of enrolledStudents
     if (course.maxStudents) {
-      if (course.enrolledStudents === course.maxStudents) {
+      if (
+        course.enrolledStudents === course.maxStudents &&
+        !studyPlan.courses.find((c) => c.code === course.code)
+      ) {
         Toast({
           message: (
             <>
@@ -217,12 +222,11 @@ function App() {
           type: "warning",
           duration: 5000,
         });
-        return false;
+        enrollResult = false;
       }
-      return true;
     }
 
-    return true;
+    return prepResult && incompResult && enrollResult;
   };
 
   // Handler called when removing a course from the study plan to check the constraints

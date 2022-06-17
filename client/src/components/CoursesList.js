@@ -47,6 +47,7 @@ function CoursesList(props) {
               course={course}
               coursesList={props.list}
               mode={props.mode}
+              studyPlan={props.studyPlan}
               studyPlanList={props.studyPlanList}
               addCourseToStudyPlan={props.addCourseToStudyPlan}
               removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}
@@ -126,6 +127,7 @@ function CoursesListItem({
   course,
   coursesList,
   mode,
+  studyPlan,
   studyPlanList,
   addCourseToStudyPlan,
   removeCourseFromStudyPlan,
@@ -177,11 +179,13 @@ function CoursesListItem({
 
     // Check for maximum number of enrolledStudents
     if (course.maxStudents) {
-      if (course.enrolledStudents === course.maxStudents) {
-        message.push(`
+      if (studyPlan && !studyPlan.courses.find((c) => c.code === course.code)) {
+        if (course.enrolledStudents === course.maxStudents) {
+          message.push(`
           ${course.code} - ${course.name}
           has already reached the maximum number of students enrolled.
         `);
+        }
       }
     }
 

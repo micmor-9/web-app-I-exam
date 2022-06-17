@@ -50,6 +50,7 @@ function HomepageRoute(props) {
           <CoursesList
             list={props.coursesList}
             mode={props.mode}
+            studyPlan={props.studyPlan}
             studyPlanList={props.studyPlanList}
             addCourseToStudyPlan={props.addCourseToStudyPlan}
             removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}
