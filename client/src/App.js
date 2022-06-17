@@ -1,12 +1,14 @@
+// Import Boostrap and CSS
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-// Import Dependencies
+// Import Dependencies and Components
 import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import { ToastContainer } from "react-toastify";
 import { Toast } from "./components/Toast";
 import NavBar from "./components/NavBar";
+import { StudyPlanMode } from "./components/StudyPlanComponents/StudyPlan";
 
 // Routes handling is done with react-router and a set of Views defined in the StudyPlanViews component
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -18,9 +20,9 @@ import {
 
 // Import API
 import API from "./API";
-import { StudyPlanMode } from "./components/StudyPlanComponents/StudyPlan";
 
 function App() {
+  // Create States
   const [currentUser, setCurrentUser] = useState({});
   const [loggedIn, setLoggedIn] = useState(false);
   const [coursesList, setCoursesList] = useState([]);
@@ -28,6 +30,9 @@ function App() {
   const [studyPlanList, setStudyPlanList] = useState([]);
   const [mode, setMode] = useState(StudyPlanMode.SHOW);
 
+  /*** API Calls ***/
+
+  // Get courses list
   const getCoursesList = () => {
     API.getAllCourses()
       .then((list) => {
@@ -43,6 +48,7 @@ function App() {
       });
   };
 
+  // Get study plan of the current user
   const getStudyPlan = () => {
     if (loggedIn) {
       API.getStudyPlan()
@@ -67,6 +73,7 @@ function App() {
     }
   };
 
+  // Effect to check if the user has already authenticated
   useEffect(() => {
     const verifyAuthentication = () => {
       API.getUserInfo() // Gather user info from the session
@@ -83,14 +90,17 @@ function App() {
     verifyAuthentication();
   }, []);
 
+  // Effect to get the updated course list after every update to the study plan
   useEffect(() => {
     getCoursesList();
   }, [studyPlan]);
 
+  // Effect to get the updated study plan after login and after every mode change (after CREATE od EDIT)
   useEffect(() => {
     getStudyPlan();
   }, [loggedIn, mode]);
 
+  // Handler for the Login API
   const handleLogin = (credentials) => {
     return new Promise((resolve, reject) => {
       API.logIn(credentials)
@@ -106,6 +116,7 @@ function App() {
     });
   };
 
+  // Handler for the Logout API
   const handleLogout = () => {
     return new Promise((resolve, reject) => {
       API.logOut()
@@ -126,6 +137,7 @@ function App() {
     });
   };
 
+  // Handler called when adding a course to the study plan to check the constraints
   const beforeAddCourse = (course) => {
     // Check for preparatoryCourse
     if (course.preparatoryCourse.length > 0) {
@@ -213,6 +225,7 @@ function App() {
     return true;
   };
 
+  // Handler called when removing a course from the study plan to check the constraints
   const beforeRemoveCourse = (course) => {
     const isPreparatory = studyPlanList.find((c) => {
       if (c.preparatoryCourse.length > 0) {
@@ -244,6 +257,7 @@ function App() {
     }
   };
 
+  // Function to update the local Study Plan courses list when adding a course
   const addCourseToStudyPlan = (course) => {
     if (beforeAddCourse(course)) {
       setStudyPlanList((studyPlanList) =>
@@ -255,6 +269,7 @@ function App() {
     }
   };
 
+  // Function to update the local Study Plan courses list when removing a course
   const removeCourseFromStudyPlan = (course) => {
     if (beforeRemoveCourse(course)) {
       setStudyPlanList((studyPlanList) =>
@@ -266,6 +281,7 @@ function App() {
     }
   };
 
+  // Handler for the Create Study Plan and Edit Study Plan API
   const saveStudyPlan = (
     mode,
     list,
@@ -305,6 +321,7 @@ function App() {
     });
   };
 
+  // Handler for the Delete Study Plan API
   const deleteStudyPlan = () => {
     return new Promise((resolve, reject) => {
       API.deleteStudyPlan()
@@ -320,6 +337,7 @@ function App() {
     });
   };
 
+  // Render return
   return (
     <BrowserRouter>
       <Container id="rootContainer" fluid="xxxl">

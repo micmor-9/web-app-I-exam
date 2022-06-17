@@ -3,6 +3,7 @@ import { Button, Col, Modal } from "react-bootstrap";
 import { StudyPlanMode, validateCredits } from "./StudyPlan";
 import { Toast } from "../Toast";
 
+// Component which containes all the buttons related to the study plan section
 function StudyPlanButtons({
   studyPlanList,
   mode,
@@ -52,6 +53,7 @@ function StudyPlanButtons({
   );
 }
 
+// Button to create a new study plan (it shows the create study plan form)
 function CreateStudyPlanBtn({ setMode }) {
   return (
     <Button
@@ -65,6 +67,7 @@ function CreateStudyPlanBtn({ setMode }) {
   );
 }
 
+// Button to edit the current study plan (it shows the edit form)
 function EditStudyPlanBtn({ setMode }) {
   return (
     <Button
@@ -79,20 +82,13 @@ function EditStudyPlanBtn({ setMode }) {
   );
 }
 
+// Button the delete the current study plan (it shows a modal dialog to confirm the deletion)
 function DeleteStudyPlanBtn({
   deleteStudyPlan,
   setStudyPlanOption,
   setStudyPlanCredits,
 }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  const handleClose = () => {
-    setShowDeleteModal(false);
-  };
-
-  const handleOpen = () => {
-    setShowDeleteModal(true);
-  };
 
   const handleDelete = () => {
     setShowDeleteModal(false);
@@ -112,11 +108,15 @@ function DeleteStudyPlanBtn({
 
   return (
     <>
-      <Button variant="outline-danger" onClick={handleOpen}>
+      <Button variant="outline-danger" onClick={() => setShowDeleteModal(true)}>
         <i className="bi bi-x-lg"></i> Delete Study Plan
       </Button>
 
-      <Modal show={showDeleteModal} onHide={handleClose} size="lg">
+      <Modal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        size="lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Delete your Study Plan</Modal.Title>
         </Modal.Header>
@@ -125,7 +125,7 @@ function DeleteStudyPlanBtn({
           This operation is IRREVERSIBLE. Are you sure you want to continue?
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
             Close
           </Button>
           <Button variant="danger" onClick={handleDelete}>
@@ -137,6 +137,7 @@ function DeleteStudyPlanBtn({
   );
 }
 
+// Button to save the current study plan (which is in CREATE or EDIT mode)
 function SaveStudyPlanBtn({
   mode,
   setMode,
@@ -147,6 +148,7 @@ function SaveStudyPlanBtn({
 }) {
   const [active, setActive] = useState(false);
 
+  // Effect to enable or disable the button according to the credits constraints
   useEffect(() => {
     validateCredits(studyPlanCredits, studyPlanOption)
       ? setActive(true)
@@ -172,20 +174,17 @@ function SaveStudyPlanBtn({
   );
 }
 
+// Button to close the CREATE/EDIT study plan form
 function CancelStudyPlanBtn({
   setMode,
-  setStudyPlanOption,
-  setStudyPlanCredits,
-  setStudyPlanList,
+  setStudyPlanOption
 }) {
   return (
     <Button
       variant="study-secondary"
       onClick={() => {
-        setMode(StudyPlanMode.SHOW);
         setStudyPlanOption();
-        setStudyPlanCredits(0);
-        setStudyPlanList([]);
+        setMode(StudyPlanMode.SHOW);
       }}
       className="me-3"
     >

@@ -2,6 +2,7 @@ import Course from "./models/Course";
 
 const SERVER_URL = "http://localhost:3001";
 
+// GET /api/courses API Call
 const getAllCourses = async () => {
   const response = await fetch(SERVER_URL + "/api/courses", {
     method: "GET",
@@ -23,6 +24,7 @@ const getAllCourses = async () => {
   } else throw coursesJson;
 };
 
+// GET /api/study-plan API Call
 const getStudyPlan = async () => {
   const response = await fetch(SERVER_URL + "/api/study-plan", {
     method: "GET",
@@ -33,6 +35,7 @@ const getStudyPlan = async () => {
   } else throw response.json();
 };
 
+// POST /api/study-plan API Call
 const createStudyPlan = async (list, option, credits) => {
   const response = await fetch(SERVER_URL + "/api/study-plan", {
     method: "POST",
@@ -49,6 +52,7 @@ const createStudyPlan = async (list, option, credits) => {
   } else throw response.json();
 };
 
+// PUT /api/study-plan API Call
 const editStudyPlan = async (list, option, credits) => {
   const response = await fetch(SERVER_URL + "/api/study-plan", {
     method: "PUT",
@@ -65,6 +69,7 @@ const editStudyPlan = async (list, option, credits) => {
   } else throw response.json();
 };
 
+// DELETE /api/study-plan API Call
 const deleteStudyPlan = async () => {
   const response = await fetch(SERVER_URL + "/api/study-plan", {
     method: "DELETE",
@@ -77,6 +82,7 @@ const deleteStudyPlan = async () => {
 
 /*** AUTHENTICATION APIs ***/
 
+// POST /api/sessions API Call
 const logIn = async (credentials) => {
   const response = await fetch(SERVER_URL + "/api/sessions", {
     method: "POST",
@@ -98,6 +104,7 @@ const logIn = async (credentials) => {
   }
 };
 
+// GET /api/sessions/current API Call
 const getUserInfo = async () => {
   const response = await fetch(SERVER_URL + "/api/sessions/current", {
     credentials: "include",
@@ -110,6 +117,7 @@ const getUserInfo = async () => {
   }
 };
 
+// DELETE /api/sessions/current API Call
 const logOut = async () => {
   const response = await fetch(SERVER_URL + "/api/sessions/current", {
     method: "DELETE",
@@ -117,8 +125,6 @@ const logOut = async () => {
   });
   if (response.ok) return null;
 };
-
-/******/
 
 const API = {
   getAllCourses,

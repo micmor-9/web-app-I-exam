@@ -13,18 +13,20 @@ import { Toast } from "../Toast";
 import StudyPlanButtons from "./StudyPlanButtons";
 import StudyPlanList from "./StudyPlanList";
 
+// Standard values of the operating mode
 const StudyPlanMode = {
-  SHOW: 0,
-  CREATE: 1,
-  EDIT: 2,
-  PRECREATE: 3,
+  SHOW: 0, // Just display the current study plan
+  CREATE: 1, // Create a new study plan (after defining the option)
+  EDIT: 2, // Edit the current study plan
+  PRECREATE: 3, // Create a new study plan (before defining the option)
 };
 
 const CreditsConstraints = {
-  0: { min: 20, max: 40 },
-  1: { min: 60, max: 80 },
+  0: { min: 20, max: 40 }, // Credits contstraints for a part time study plan
+  1: { min: 60, max: 80 }, // Credits contstraints for a full time study plan
 };
 
+// Function to validate the number of credits of a study plan according to the selected option
 const validateCredits = (credits, option) => {
   if (option === undefined) return false;
   if (credits < CreditsConstraints[option].min) return false;
@@ -32,6 +34,7 @@ const validateCredits = (credits, option) => {
   return true;
 };
 
+// Study Plan Component
 function StudyPlan({
   mode,
   setMode,
@@ -42,9 +45,11 @@ function StudyPlan({
   saveStudyPlan,
   deleteStudyPlan,
 }) {
+  // States of the local study plan list
   const [studyPlanOption, setStudyPlanOption] = useState();
   const [studyPlanCredits, setStudyPlanCredits] = useState(0);
 
+  // Effect to update option and credits whenever studyPlan changes
   useEffect(() => {
     if (studyPlan) {
       setStudyPlanOption(studyPlan.option);
@@ -52,14 +57,18 @@ function StudyPlan({
     }
   }, [studyPlan]);
 
+  // Effect to show an error when the study plan credits exceed the maximum
   useEffect(() => {
     if (
       studyPlanOption !== undefined &&
       studyPlanCredits > CreditsConstraints[studyPlanOption].max
     ) {
+      const diff = studyPlanCredits - CreditsConstraints[studyPlanOption].max;
       Toast({
         message:
-          "You've reached the maximum amount of credits for your study plan. Remove an exam.",
+          "You've reached the maximum amount of credits for your study plan. Remove " +
+          diff +
+          " CFU.",
         type: "error",
       });
     }
@@ -95,12 +104,13 @@ function StudyPlan({
       </Row>
       <Row>
         {mode == StudyPlanMode.SHOW && (
-          <StudyPlanList studyPlan={studyPlan} studyPlanList={studyPlanList} />
+          <StudyPlanList studyPlanList={studyPlanList} />
         )}
         {(mode == StudyPlanMode.CREATE ||
           mode == StudyPlanMode.PRECREATE ||
           mode == StudyPlanMode.EDIT) && (
           <StudyPlanForm
+            studyPlan={studyPlan}
             studyPlanList={studyPlanList}
             removeCourseFromStudyPlan={removeCourseFromStudyPlan}
             mode={mode}
@@ -116,6 +126,7 @@ function StudyPlan({
   );
 }
 
+// Show option and credits of the current study plan
 function StudyPlanInfo({ mode, studyPlan }) {
   return (
     <>
@@ -133,6 +144,7 @@ function StudyPlanInfo({ mode, studyPlan }) {
   );
 }
 
+// Form to create or edit the study plan
 function StudyPlanForm({
   studyPlanList,
   removeCourseFromStudyPlan,
@@ -143,6 +155,11 @@ function StudyPlanForm({
   setStudyPlanOption,
   setStudyPlanCredits,
 }) {
+  /**
+   * Effect to update the total number of credits of the current study plan.
+   * Implemented through an effect because the functions that update the the study plan (by adding or removing a course)
+   * are defined in App.js and states are not visible at that level
+   * */
   useEffect(() => {
     const totalCredits = studyPlanList
       .map((course) => course.credits)
@@ -191,66 +208,65 @@ function StudyPlanForm({
         </Row>
       )}
       {studyPlanOption !== undefined && (
-        <Row>
-          <Col className="mb-3">
-            A {studyPlanOption == 0 ? "Part Time" : "Full Time"} study plan
-            needs to have minimum {CreditsConstraints[studyPlanOption].min} and
-            maximum {CreditsConstraints[studyPlanOption].max} credits.
-          </Col>
-        </Row>
-      )}
-      {studyPlanOption !== undefined && (
-        <Row id="study-plan-progress">
-          <Row className="align-items-center">
-            <Col>
-              <h4 className="text-muted text-start">0</h4>
+        <>
+          <Row>
+            <Col className="mb-3">
+              A {studyPlanOption == 0 ? "Part Time" : "Full Time"} study plan
+              needs to have minimum {CreditsConstraints[studyPlanOption].min}{" "}
+              and maximum {CreditsConstraints[studyPlanOption].max} credits.
             </Col>
-            {studyPlanOption == 1 && (
-              <>
-                <Col></Col>
-                <Col></Col>
-                <Col></Col>
-              </>
-            )}
-            <Col>
-              <h4 className="text-muted text-center">
-                {CreditsConstraints[studyPlanOption].min}
-              </h4>
-            </Col>
-            <Col>
-              <h4 className="text-muted text-end">
-                {studyPlanCredits}/{CreditsConstraints[studyPlanOption].max} CFU
-              </h4>
-            </Col>
+          </Row>
+          <Row id="study-plan-progress">
+            <Row className="align-items-center">
+              <Col>
+                <h4 className="text-muted text-start">0</h4>
+              </Col>
+              {studyPlanOption == 1 && (
+                <>
+                  <Col></Col>
+                  <Col></Col>
+                  <Col></Col>
+                </>
+              )}
+              <Col>
+                <h4 className="text-muted text-center">
+                  {CreditsConstraints[studyPlanOption].min}
+                </h4>
+              </Col>
+              <Col>
+                <h4 className="text-muted text-end">
+                  {studyPlanCredits}/{CreditsConstraints[studyPlanOption].max}{" "}
+                  CFU
+                </h4>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <ProgressBar className="flex-grow-1">
+                  <ProgressBar
+                    animated
+                    variant={
+                      validateCredits(studyPlanCredits, studyPlanOption)
+                        ? "success"
+                        : "danger"
+                    }
+                    now={
+                      // Calculation to get the correct value of progress bar now position
+                      (studyPlanCredits * 100) /
+                      CreditsConstraints[studyPlanOption].max
+                    }
+                  />
+                </ProgressBar>
+              </Col>
+            </Row>
           </Row>
           <Row>
-            <Col>
-              <ProgressBar className="flex-grow-1">
-                <ProgressBar
-                  animated
-                  variant={
-                    validateCredits(studyPlanCredits, studyPlanOption)
-                      ? "success"
-                      : "danger"
-                  }
-                  now={
-                    (studyPlanCredits * 100) /
-                    CreditsConstraints[studyPlanOption].max
-                  }
-                />
-              </ProgressBar>
-            </Col>
+            <StudyPlanList
+              studyPlanList={studyPlanList}
+              removeCourseFromStudyPlan={removeCourseFromStudyPlan}
+            />
           </Row>
-        </Row>
-      )}
-      {studyPlanOption !== undefined && (
-        <Row>
-          <StudyPlanList
-            empty={false}
-            studyPlanList={studyPlanList}
-            removeCourseFromStudyPlan={removeCourseFromStudyPlan}
-          />
-        </Row>
+        </>
       )}
     </Card>
   );

@@ -3,6 +3,7 @@ import CoursesList from "./CoursesList";
 import { LoginForm } from "./AuthComponents";
 import { StudyPlan } from "./StudyPlanComponents/StudyPlan";
 
+// Route rendered when the path is not recognized as a valid route
 function DefaultRoute() {
   return (
     <Container fluid="xxl" className="App">
@@ -12,6 +13,7 @@ function DefaultRoute() {
   );
 }
 
+// View displayed in the Login Route
 function LoginRoute(props) {
   return (
     <Container fluid="xxl" className="App login-form-container">
@@ -22,24 +24,28 @@ function LoginRoute(props) {
   );
 }
 
+// View displayed in the Homepage Route
 function HomepageRoute(props) {
   return (
     <Container fluid="xxl" className="App">
       <Row id="content" className="justify-content-center">
-        {props.loggedIn && (
-          <Row id="studyPlanPanel">
-            <StudyPlan
-              mode={props.mode}
-              setMode={props.setMode}
-              studyPlan={props.studyPlan}
-              studyPlanList={props.studyPlanList}
-              setStudyPlanList={props.setStudyPlanList}
-              removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}
-              saveStudyPlan={props.saveStudyPlan}
-              deleteStudyPlan={props.deleteStudyPlan}
-            />
-          </Row>
-        )}
+        {
+          // If the user is logged in, show the Study Plan Component to display the study plan section
+          props.loggedIn && (
+            <Row id="studyPlanPanel">
+              <StudyPlan
+                mode={props.mode}
+                setMode={props.setMode}
+                studyPlan={props.studyPlan}
+                studyPlanList={props.studyPlanList}
+                setStudyPlanList={props.setStudyPlanList}
+                removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}
+                saveStudyPlan={props.saveStudyPlan}
+                deleteStudyPlan={props.deleteStudyPlan}
+              />
+            </Row>
+          )
+        }
         <Row id="coursesListPanel">
           <CoursesList
             list={props.coursesList}

@@ -171,6 +171,12 @@
   font-size: 0.9rem;
 }
 
+#study-plan-progress {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
 .study-plan-option-badge {
   background-color: #ffffff;
   border: #edbb5f solid 2px;

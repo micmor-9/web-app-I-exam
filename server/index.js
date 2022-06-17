@@ -61,6 +61,7 @@ const isLoggedIn = (req, res, next) => {
   return res.status(401).json({ error: "Not authorized" });
 };
 
+// Setup the app to use passport session
 app.use(
   session({
     secret: "44c5e72e75cefe051c30cbbc411416ef",
@@ -144,7 +145,7 @@ app.put(
   }
 );
 
-// DELETE /api/study-plan/ -Delete the study plan of the current user
+// DELETE /api/study-plan/ - Delete the study plan of the current user
 app.delete("/api/study-plan/", isLoggedIn, (req, res) => {
   const user = req.user;
 
@@ -161,6 +162,7 @@ app.delete("/api/study-plan/", isLoggedIn, (req, res) => {
 
 /*** AUTHENTICATION APIs ***/
 
+// POST /api/sessions - Create a new session with the logged in user
 app.post("/api/sessions", function (req, res, next) {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
@@ -178,14 +180,14 @@ app.post("/api/sessions", function (req, res, next) {
   })(req, res, next);
 });
 
-// GET /api/sessions/current
+// GET /api/sessions/current - Get the info about the current user
 app.get("/api/sessions/current", isLoggedIn, (req, res) => {
   if (req.isAuthenticated()) {
     res.status(200).json(req.user);
   } else res.status(401).json({ error: "Not authenticated" });
 });
 
-// DELETE /api/session/current
+// DELETE /api/session/current - Delete the current session and logout the user
 app.delete("/api/sessions/current", isLoggedIn, (req, res) => {
   req.logout(() => {
     res.end();

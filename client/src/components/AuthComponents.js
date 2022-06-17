@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Form, NavDropdown, Row } from "react-bootstrap";
 import { Toast } from "./Toast";
 
+// Login Form Component
 function LoginForm(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -71,6 +72,7 @@ function LoginForm(props) {
   );
 }
 
+// User Actions Component (shows user name and surname in the navbar and a dropdown with logout button)
 function UserActions({ user, logout }) {
   const logoutAction = () => {
     logout()

@@ -1,6 +1,7 @@
 import { toast, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Toast Component
 export function Toast({ message, type, duration = 5000 }) {
   const params = {
     position: "bottom-right",
@@ -34,12 +35,4 @@ export function Toast({ message, type, duration = 5000 }) {
       toast(message, params);
       break;
   }
-}
-
-export function ToastPromise({ promise, pendingText, successText, errorText }) {
-  toast.promise(promise, {
-    pending: pendingText,
-    success: successText,
-    error: errorText,
-  });
 }

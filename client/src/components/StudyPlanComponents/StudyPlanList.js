@@ -1,14 +1,10 @@
 import { Button, Col, Table } from "react-bootstrap";
 
-function StudyPlanList({
-  studyPlan,
-  studyPlanList,
-  removeCourseFromStudyPlan,
-}) {
+// Study Plan List component
+function StudyPlanList({ studyPlanList, removeCourseFromStudyPlan }) {
   if (studyPlanList.length > 0) {
     return (
       <StudyPlanTable
-        studyPlan={studyPlan}
         data={studyPlanList}
         removeCourseFromStudyPlan={removeCourseFromStudyPlan}
       />
@@ -20,6 +16,7 @@ function StudyPlanList({
   }
 }
 
+// Table to show the list of course added to the study plan
 function StudyPlanTable({ data, removeCourseFromStudyPlan = null }) {
   return (
     <Col xs={12}>

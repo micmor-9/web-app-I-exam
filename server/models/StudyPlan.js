@@ -23,31 +23,10 @@ class StudyPlan {
   }
 
   /**
-   * Sets the courses that are inserted into the study plan
-   * @param {Course[]} courses List of courses that are inserted into the study plan
+   * Checks if the current study plan is respecting all the constraints (credits, incompatibleCourses and preparatoryCourses)
+   * @returns {boolean}
    */
-  setCourses(courses) {
-    this.courses = courses;
-  }
-
-  /**
-   * Add a course to the study plan's courses collection
-   * @param {Course} course The course to add to the courses collection
-   */
-  addCourse(course) {
-    this.courses.push(course);
-  }
-
-  /**
-   * Remove a course to the study plan's courses collection
-   * @param {Course} course The course to remove to the courses collection
-   */
-  removeCourse(course) {
-    this.courses = this.courses.filter((c) => c.id !== course.id);
-  }
-
   checkConsistency() {
-    console.log(this.courses);
     if (this.courses.length > 0) {
       // Check credits consistency with option
       const totalCredits = this.courses

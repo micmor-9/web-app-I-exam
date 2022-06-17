@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { UserActions } from "./AuthComponents";
 import "../App.css";
 
+// Navbar Component
 function NavBar({ loggedIn, user, logout }) {
   return (
     <Navbar bg="white" expand="md" className="main-navbar">
@@ -21,13 +22,16 @@ function NavBar({ loggedIn, user, logout }) {
           id="responsive-navbar-study-plan"
           className="justify-content-end"
         >
-          {loggedIn ? (
-            <UserActions user={user} logout={logout} />
-          ) : (
-            <Link to="/login">
-              <Button variant="outline-study">Login</Button>
-            </Link>
-          )}
+          {
+            // If the user is logged in, show User Actions, else show Login Button
+            loggedIn ? (
+              <UserActions user={user} logout={logout} />
+            ) : (
+              <Link to="/login">
+                <Button variant="outline-study">Login</Button>
+              </Link>
+            )
+          }
         </Navbar.Collapse>
       </Container>
     </Navbar>

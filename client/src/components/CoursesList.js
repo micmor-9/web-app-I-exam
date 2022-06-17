@@ -14,7 +14,9 @@ import {
   Row,
 } from "react-bootstrap";
 
+// Courses List Component
 function CoursesList(props) {
+  // Create a State to handle pagination
   const [pagination, setPagination] = useState(1);
   const elementsPerPage = 10;
 
@@ -36,6 +38,7 @@ function CoursesList(props) {
       </h3>
       <Row>
         {props.list.map((course, index) => {
+          // Calculate the page to which the current item of the list belongs
           const page = Math.ceil((index + 1) / elementsPerPage);
           return page === pagination ? (
             <CoursesListItem
@@ -68,10 +71,13 @@ function CoursesListPagination({
   list,
 }) {
   const paginationItems = [];
+  // Calculate the number of pages needed to display all the list items
   const pages =
     list.length % elementsPerPage != 0
       ? list.length / elementsPerPage + 1
       : list.length / elementsPerPage;
+
+  // Add to the pagination items the previous element button, the number of pages and the next element button
   paginationItems.push(
     <Pagination.Prev
       key="prev"
@@ -124,13 +130,16 @@ function CoursesListItem({
   addCourseToStudyPlan,
   removeCourseFromStudyPlan,
 }) {
+  // Create state to expand the current item
   const [expanded, setExpanded] = useState(false);
+  // Create state to display the current item with a warning if it can't be added to the study plan
   const [warning, setWarning] = useState();
 
   const toggleExpanded = () => {
     setExpanded((expanded) => !expanded);
   };
 
+  // Function that checks if the current item can be added to the study plan
   const checkCoursesConstraints = () => {
     let message = [];
 
@@ -183,6 +192,7 @@ function CoursesListItem({
     }
   };
 
+  // Effect to update the warnings of the list items whenever the stidu plan list is updated
   useEffect(() => {
     checkCoursesConstraints();
   }, [studyPlanList]);
@@ -239,6 +249,7 @@ function CoursesListItem({
   );
 }
 
+// Course Code Column
 function CourseCode({ cols, index, code }) {
   return (
     <Col
@@ -260,6 +271,7 @@ function CourseCode({ cols, index, code }) {
   );
 }
 
+// Course Name Column
 function CourseName({ cols, name, index, warning, mode }) {
   return (
     <Col
@@ -287,6 +299,7 @@ function CourseName({ cols, name, index, warning, mode }) {
   );
 }
 
+// Course Credits Column
 function CourseCredits({ cols, credits }) {
   return (
     <Col
@@ -302,6 +315,7 @@ function CourseCredits({ cols, credits }) {
   );
 }
 
+// Course Info Column
 function CourseInfo({ cols, course, index }) {
   return (
     <>
@@ -370,6 +384,7 @@ function CourseInfo({ cols, course, index }) {
   );
 }
 
+// Course Actions Column
 function CourseActions({
   cols,
   course,
@@ -415,6 +430,7 @@ function CourseActions({
   );
 }
 
+// Course Description Column (shows the expanded content)
 function CourseDescription({ course }) {
   return (
     <Card.Text

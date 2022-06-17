@@ -4,12 +4,15 @@
 const sqlite = require("sqlite3");
 const Course = require("./Course");
 
+// Open DB
 const db = new sqlite.Database("./db.sqlite", (err) => {
   if (err) throw err;
 });
 
+// Get the full list of Courses from the database
 exports.listCourses = () => {
   return new Promise((resolve, reject) => {
+    // First, get the complete list of incompatible courses
     db.all(
       "SELECT * FROM incompatible_courses, course WHERE incompatible_courses.incompatibleWith = course.code",
       [],
@@ -21,6 +24,7 @@ exports.listCourses = () => {
             incompatibleWith: course.incompatibleWith,
             incompatibleName: course.name,
           }));
+          // Then, get the complete list of preparatory courses
           db.all(
             "SELECT t1.code, t1.preparatoryCourse, t2.name FROM course as t1, course as t2 WHERE t1.preparatoryCourse = t2.code",
             [],
@@ -32,6 +36,7 @@ exports.listCourses = () => {
                   prepCode: course.preparatoryCourse,
                   prepName: course.name,
                 }));
+                // Finally, get the complete list of courses ordered aplhabetically
                 db.all(
                   "SELECT * FROM course ORDER BY name ASC",
                   [],
@@ -41,6 +46,7 @@ exports.listCourses = () => {
                       reject(err);
                       return;
                     } else {
+                      // Now, the complete list of courses is mapped with the preparatory course and the incompatible courses
                       const courses = rows.map((row) => {
                         const incompatible = incompatible_courses
                           .filter((code) => code.courseCode === row.code)
@@ -69,6 +75,7 @@ exports.listCourses = () => {
                         );
                         return course;
                       });
+                      // An array of Course objects (complete of all information regarding preparatory and incompatible courses) is resolved
                       resolve(courses);
                     }
                   }
