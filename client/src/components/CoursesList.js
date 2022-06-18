@@ -37,23 +37,24 @@ function CoursesList(props) {
         </OverlayTrigger>
       </h3>
       <Row>
-        {props.list.map((course, index) => {
-          // Calculate the page to which the current item of the list belongs
-          const page = Math.ceil((index + 1) / elementsPerPage);
-          return page === pagination ? (
-            <CoursesListItem
-              key={course.code}
-              index={index}
-              course={course}
-              coursesList={props.list}
-              mode={props.mode}
-              studyPlan={props.studyPlan}
-              studyPlanList={props.studyPlanList}
-              addCourseToStudyPlan={props.addCourseToStudyPlan}
-              removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}
-            />
-          ) : null;
-        })}
+        {props.list.length > 0 &&
+          props.list.map((course, index) => {
+            // Calculate the page to which the current item of the list belongs
+            const page = Math.ceil((index + 1) / elementsPerPage);
+            return page === pagination ? (
+              <CoursesListItem
+                key={course.code}
+                index={index}
+                course={course}
+                coursesList={props.list}
+                mode={props.mode}
+                studyPlan={props.studyPlan}
+                studyPlanList={props.studyPlanList}
+                addCourseToStudyPlan={props.addCourseToStudyPlan}
+                removeCourseFromStudyPlan={props.removeCourseFromStudyPlan}
+              />
+            ) : null;
+          })}
       </Row>
       <CoursesListPagination
         pagination={pagination}

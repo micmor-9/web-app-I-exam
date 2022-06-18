@@ -215,8 +215,8 @@
 
 ## Users Credentials
 
-- student@studenti.polito.it, password
-- test@test.it, password
-- dev@studenti.polito.it, password
-- mario.rossi@polito.it, password
+- student@studenti.polito.it, password (has already a __PART-TIME__ study plan)
+- test@test.it, password (has already a __FULL-TIME__ study plan)
+- dev@studenti.polito.it, password (has already a __PART-TIME__ study plan)
+- mario.rossi@polito.it, password 
 - michele.morgigno@studenti.polito.it, student

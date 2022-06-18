@@ -50,9 +50,13 @@ function App() {
       })
       .catch((err) => {
         console.error(err);
-        setCoursesList();
+        setCurrentUser({});
+        setCoursesList([]);
+        setStudyPlan();
+        setStudyPlanList([]);
+        setMode(StudyPlanMode.SHOW);
         Toast({
-          message: "Error: " + err.error,
+          message: "Error: can't estabilish a connection with the server",
           type: "error",
         });
       });
