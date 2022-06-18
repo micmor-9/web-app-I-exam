@@ -26,7 +26,7 @@ class StudyPlan {
    * Checks if the current study plan is respecting all the constraints (credits, incompatibleCourses and preparatoryCourses)
    * @returns {boolean}
    */
-  checkConsistency() {
+  checkConsistency(mode) {
     let result = true;
     if (this.courses.length > 0) {
       // Check credits consistency with option
@@ -42,10 +42,21 @@ class StudyPlan {
       )
         result = false;
 
-      // Check number of students enrolled consistency
-      this.courses.forEach((course) => {
-        if (course.enrolledStudents === course.maxStudents) result = false;
-      });
+      if (mode !== "edit") {
+        // Check number of students enrolled consistency
+        this.courses.forEach((course) => {
+          if (course.enrolledStudents === course.maxStudents) result = false;
+        });
+      } else {
+        // Check number of students enrolled consistency
+        this.courses.forEach((course) => {
+          if (
+            course.maxStudents !== null &&
+            course.enrolledStudents > course.maxStudents
+          )
+            result = false;
+        });
+      }
 
       // Check preparatory and incompatible consistency
       this.courses.forEach((course) => {

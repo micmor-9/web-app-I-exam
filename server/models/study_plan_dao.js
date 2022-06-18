@@ -73,7 +73,7 @@ exports.createStudyPlan = (list, option, credits, user) => {
         parsed_list.includes(c.code)
       );
       const study_plan = new StudyPlan(option, credits, user, study_plan_list);
-      if (study_plan.checkConsistency()) {
+      if (study_plan.checkConsistency("create")) {
         // Update first the option field of the student
         const sql = "UPDATE student SET option = ? WHERE id = ?";
         db.run(sql, [option, user.id], function (err) {
@@ -145,7 +145,7 @@ exports.editStudyPlan = (list, option, credits, user) => {
         parsed_list.includes(c.code)
       );
       // Create the object of the updated study plan
-      const updated_study_plan = new StudyPlan(
+      let updated_study_plan = new StudyPlan(
         option,
         credits,
         user,
@@ -157,8 +157,20 @@ exports.editStudyPlan = (list, option, credits, user) => {
         if (current_study_plan === 404) {
           reject(404);
         }
+        const courses_to_add = updated_study_plan.courses.filter(
+          (course) =>
+            !current_study_plan.courses.map((c) => c.code).includes(course.code)
+        );
+        updated_study_plan.courses = updated_study_plan.courses.map(
+          (course) => {
+            if (courses_to_add.map((c) => c.code).includes(course.code)) {
+              course.enrolledStudents++;
+            }
+            return course;
+          }
+        );
         // Check if the new study plan is consistent with all the constraints
-        if (updated_study_plan.checkConsistency()) {
+        if (updated_study_plan.checkConsistency("edit")) {
           // Get the courses to remove from the study plan and create an array of promises
           const to_remove = current_study_plan.courses
             .filter(
